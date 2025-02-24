@@ -1,33 +1,6 @@
-// Inicialização do Three.js para o globo 3D
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / 500, 0.1, 1000);
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, 500);
-document.getElementById('globe-container').appendChild(renderer.domElement);
-
-const geometry = new THREE.SphereGeometry(5, 32, 32);
-const textureLoader = new THREE.TextureLoader();
-textureLoader.load(
-    'globe_texture.jpg', // Substitua pelo caminho da sua textura
-    function (texture) {
-        const material = new THREE.MeshBasicMaterial({ map: texture });
-        const globe = new THREE.Mesh(geometry, material);
-        scene.add(globe);
-    },
-    undefined,
-    function (err) {
-        console.error('Ocorreu um erro ao carregar a textura.', err);
-    }
-);
-
-camera.position.z = 10;
-
-function animate() {
-    requestAnimationFrame(animate);
-    globe.rotation.y += 0.005; // Rotação automática
-    renderer.render(scene, camera);
-}
-animate();
+// Inicialização do mapa Leaflet
+const map = L.map('map-container').setView([0, 0], 2);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
 // Banco de dados
 const database = {

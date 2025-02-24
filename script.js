@@ -1,6 +1,8 @@
 // Inicialização do mapa Leaflet
 const map = L.map('map-container').setView([0, 0], 2);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);
 
 // Banco de dados
 const database = {
@@ -77,4 +79,14 @@ const database = {
     "China": [
         { "nome": "ATM Bitcoin Pequim 1", "gps": "39.9042,116.4074" },
         { "nome": "Loja Bitcoin Xangai 1", "gps": "31.2304,121.4737" },
+        { "nome": "ATM Bitcoin Guangzhou 1", "gps": "23.1291,113.2644" }
+    ],
+    "África do Sul": [
+        { "nome": "ATM Bitcoin Cidade do Cabo 1", "gps": "-33.9249,18.4241" },
+        { "nome": "Loja Bitcoin Joanesburgo 1", "gps": "-26.2041,28.0473" },
+        { "nome": "ATM Bitcoin Durban 1", "gps": "-29.8587,31.0218" }
+    ],
+    "Coreia do Sul": [
+        { "nome": "ATM Bitcoin Seul 1", "gps": "37.5665,126.9780" },
+        { "nome": "Loja Bitcoin Busan 1", "gps": "35.1796,129.0756" },
         

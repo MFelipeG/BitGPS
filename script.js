@@ -1,58 +1,69 @@
-// Inicialização do mapa Leaflet
-const map = L.map('map-container').setView([0, 0], 2);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-}).addTo(map);
+document.addEventListener("DOMContentLoaded", function () {
+    // Verifica se o container do mapa existe antes de inicializar
+    const mapContainer = document.getElementById('map-container');
+    if (!mapContainer) {
+        console.error("Erro: Elemento #map-container não encontrado!");
+        return;
+    }
 
-// Banco de dados
-const database = {
-    "Brasil": [
-        { "nome": "ATM Bitcoin São Paulo 1", "gps": "-23.5505,-46.6333" },
-        { "nome": "Loja Bitcoin Rio 1", "gps": "-22.9068,-43.1729" },
-        { "nome": "ATM Bitcoin Curitiba 1", "gps": "-25.4296,-49.2719" }
-    ],
-    "Portugal": [
-        { "nome": "ATM Bitcoin Lisboa 1", "gps": "38.7223,-9.1393" },
-        { "nome": "Loja Bitcoin Porto 1", "gps": "41.1579,-8.6291" },
-        { "nome": "ATM Bitcoin Coimbra 1", "gps": "40.2111,-8.4116" }
-    ],
-    "Estados Unidos": [
-        { "nome": "ATM Bitcoin Nova York 1", "gps": "40.7128,-74.0060" },
-        { "nome": "Loja Bitcoin Los Angeles 1", "gps": "34.0522,-118.2437" },
-        { "nome": "ATM Bitcoin Chicago 1", "gps": "41.8781,-87.6298" }
-    ],
-    "Canadá": [
-        { "nome": "ATM Bitcoin Toronto 1", "gps": "43.6532,-79.3832" },
-        { "nome": "Loja Bitcoin Vancouver 1", "gps": "49.2827,-123.1207" },
-        { "nome": "ATM Bitcoin Montreal 1", "gps": "45.5017,-73.5673" }
-    ],
-    "Reino Unido": [
-        { "nome": "ATM Bitcoin Londres 1", "gps": "51.5074,-0.1278" },
-        { "nome": "Loja Bitcoin Manchester 1", "gps": "53.4808,-2.2426" },
-        { "nome": "ATM Bitcoin Edimburgo 1", "gps": "55.9533,-3.1883" }
-    ],
-    "Austrália": [
-        { "nome": "ATM Bitcoin Sydney 1", "gps": "-33.8688,151.2093" },
-        { "nome": "Loja Bitcoin Melbourne 1", "gps": "-37.8136,144.9631" },
-        { "nome": "ATM Bitcoin Brisbane 1", "gps": "-27.4698,153.0251" }
-    ],
-    "Japão": [
-        { "nome": "ATM Bitcoin Tóquio 1", "gps": "35.6895,139.6917" },
-        { "nome": "Loja Bitcoin Osaka 1", "gps": "34.6937,135.5023" },
-        { "nome": "ATM Bitcoin Quioto 1", "gps": "35.0116,135.7681" }
-    ],
-    "Alemanha": [
-        { "nome": "ATM Bitcoin Berlim 1", "gps": "52.5200,13.4050" },
-        { "nome": "Loja Bitcoin Munique 1", "gps": "48.1351,11.5820" },
-        { "nome": "ATM Bitcoin Frankfurt 1", "gps": "50.1109,8.6821" }
-    ],
-    "França": [
-        { "nome": "ATM Bitcoin Paris 1", "gps": "48.8566,2.3522" },
-        { "nome": "Loja Bitcoin Lyon 1", "gps": "45.7640,4.8357" },
-        { "nome": "ATM Bitcoin Marselha 1", "gps": "43.2965,5.3698" }
-    ],
-    "Itália": [
-        { "nome": "ATM Bitcoin Roma 1", "gps": "41.9028,12.4964" },
-        { "nome": "Loja Bitcoin Milão 1", "gps": "45.4654,9.1859" },
-        { "nome": "ATM Bitcoin Nápoles 1", "gps": "40.8522,14.2
-            
+    // Inicializa o mapa
+    const map = L.map('map-container').setView([0, 0], 2);
+    
+    // Adiciona o tile layer do OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    console.log("Mapa carregado com sucesso!");
+
+    // Banco de dados de locais Bitcoin
+    const database = {
+        "Brasil": [
+            { "nome": "ATM Bitcoin São Paulo", "gps": "-23.5505,-46.6333" },
+            { "nome": "Loja Bitcoin Rio de Janeiro", "gps": "-22.9068,-43.1729" },
+            { "nome": "ATM Bitcoin Curitiba", "gps": "-25.4296,-49.2719" }
+        ],
+        "Portugal": [
+            { "nome": "ATM Bitcoin Lisboa", "gps": "38.7223,-9.1393" },
+            { "nome": "Loja Bitcoin Porto", "gps": "41.1579,-8.6291" },
+            { "nome": "ATM Bitcoin Coimbra", "gps": "40.2111,-8.4116" }
+        ]
+    };
+
+    // Referências dos elementos da interface
+    const searchInput = document.getElementById('country-search');
+    const searchButton = document.getElementById('search-button');
+    const resultsContainer = document.getElementById('results-container');
+
+    // Função para buscar locais pelo país
+    function searchCountry() {
+        const country = searchInput.value.trim();
+        resultsContainer.innerHTML = ""; // Limpa os resultados anteriores
+
+        if (database[country]) {
+            resultsContainer.innerHTML = `<h3>Locais em ${country}:</h3>`;
+
+            database[country].forEach(location => {
+                const [lat, lng] = location.gps.split(",");
+                const marker = L.marker([parseFloat(lat), parseFloat(lng)]).addTo(map)
+                    .bindPopup(`<b>${location.nome}</b>`);
+
+                const resultItem = document.createElement("p");
+                resultItem.innerHTML = `<strong>${location.nome}</strong> - <button onclick="focusOnMap(${lat}, ${lng})">Ver no mapa</button>`;
+                resultsContainer.appendChild(resultItem);
+            });
+
+            console.log(`Locais carregados para ${country}`);
+        } else {
+            resultsContainer.innerHTML = `<p>Nenhum local encontrado para "${country}".</p>`;
+        }
+    }
+
+    // Adiciona evento ao botão de busca
+    searchButton.addEventListener("click", searchCountry);
+
+    // Função para centralizar o mapa em um ponto específico
+    window.focusOnMap = function(lat, lng) {
+        map.setView([lat, lng], 12);
+    };
+});

@@ -3,7 +3,8 @@ body {
     font-family: sans-serif;
     display: flex;
     flex-direction: column;
-    min-height: 100vh; /* Garante que o body ocupa toda a altura da tela */
+    min-height: 100vh;
+    background-color: #f0f0f0; /* Cor de fundo */
 }
 
 #globe-container {
@@ -18,11 +19,11 @@ body {
 
 #results-container {
     padding: 20px;
-    flex-grow: 1; /* Permite que o conteúdo principal cresça e empurre o rodapé para baixo */
+    flex-grow: 1;
 }
 
 #footer {
-    background-color: #f0f0f0;
+    background-color: #e0e0e0;
     padding: 10px;
     text-align: center;
 }

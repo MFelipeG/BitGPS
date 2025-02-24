@@ -1,6 +1,6 @@
 body {
     margin: 0;
-    font-family: sans-serif;
+    font-family: Arial, sans-serif;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
@@ -10,6 +10,7 @@ body {
 #map-container {
     width: 100%;
     height: 500px;
+    background: #ddd; /* Caso o mapa não carregue, um fundo cinza será mostrado */
 }
 
 #search-container {

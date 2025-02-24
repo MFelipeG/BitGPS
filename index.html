@@ -1,166 +1,170 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CryptoMap - Caixas e Estabelecimentos</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #121212;
-      color: #ffffff;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoMap - Caixas e Estabelecimentos</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/controls/OrbitControls.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1e1e2f;
+            color: #ffffff;
+        }
 
-    header {
-      background: linear-gradient(90deg, #fed263, #a45208);
-      color: white;
-      text-align: center;
-      padding: 20px;
-    }
+        header {
+            background: linear-gradient(90deg, #f2a900, #b8860b);
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
 
-    header h1 {
-      margin: 0;
-      font-size: 2.5em;
-    }
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
 
-    header p {
-      font-size: 1em;
-    }
+        header p {
+            font-size: 1em;
+        }
 
-    .globe-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 400px;
-    }
+        .globe-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 500px;
+        }
 
-    #globeCanvas {
-      width: 100%;
-      max-width: 600px;
-      height: auto;
-    }
+        #globeCanvas {
+            width: 100%;
+            max-width: 800px;
+            height: auto;
+        }
 
-    .search-container {
-      text-align: center;
-      margin-top: 20px;
-    }
+        .search-container {
+            text-align: center;
+            margin-top: 20px;
+        }
 
-    .search-container input,
-    .search-container button {
-      padding: 10px;
-      font-size: 16px;
-      margin-right: 10px;
-      background-color: #f9a410;
-      color: #000000;
-    }
+        .search-container input,
+        .search-container button {
+            padding: 10px;
+            font-size: 16px;
+            margin-right: 10px;
+            background-color: #f2a900;
+            color: #000000;
+        }
 
-    .results-container {
-      padding: 20px;
-    }
+        .results-container {
+            padding: 20px;
+        }
 
-    .result-item {
-      background-color: #a45208;
-      border-radius: 10px;
-      padding: 15px;
-      margin-bottom: 10px;
-    }
+        .result-item {
+            background-color: #b8860b;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
 
-    footer {
-      background-color: #2c2443;
-      color: white;
-      text-align: center;
-      padding: 10px;
-    }
-  </style>
+        footer {
+            background-color: #2c2443;
+            color: white;
+            text-align: center;
+            padding: 10px;
+        }
+    </style>
 </head>
 <body>
 <header>
-  <h1>CryptoMap</h1>
-  <p>Encontre caixas eletrônicos e estabelecimentos comerciais que aceitam criptomoedas ao redor do mundo!</p>
+    <h1>CryptoMap</h1>
+    <p>Encontre caixas eletrônicos e estabelecimentos comerciais que aceitam criptomoedas ao redor do mundo!</p>
 </header>
 
-<!-- Globo Interativo -->
 <div class="globe-container">
-  <canvas id="globeCanvas"></canvas>
+    <canvas id="globeCanvas"></canvas>
 </div>
 
-<!-- Campo de Pesquisa -->
 <div class="search-container">
-  <input type="text" id="countryInput" placeholder="Digite o nome do país">
-  <button onclick="searchCountry()">Pesquisar</button>
+    <input type="text" id="countryInput" placeholder="Digite o nome do país">
+    <button onclick="searchCountry()">Pesquisar</button>
 </div>
 
-<!-- Resultados -->
 <div class="results-container" id="resultsContainer">
-  <!-- Resultados serão exibidos aqui -->
 </div>
 
 <footer>
-  Desenvolvido por Marlon Felipe
+    Desenvolvido por Marlon Felipe
 </footer>
 
 <script>
-// Configuração do Globo Interativo
-let scene, camera, renderer, globe;
+    let scene, camera, renderer, globe, controls;
 
-function initGlobe() {
-  scene = new THREE.Scene();
-  
-  camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.z = 5;
+    function initGlobe() {
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 5;
 
-  renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('globeCanvas'), antialias: true });
-  
-  renderer.setSize(window.innerWidth * 0.8, window.innerHeight * 0.5);
+        renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('globeCanvas'), antialias: true });
+        renderer.setSize(window.innerWidth * 0.8, window.innerHeight * 0.6);
+        renderer.setPixelRatio(window.devicePixelRatio);
 
-  const geometry = new THREE.SphereGeometry(2, 32, 32);
-  const material = new THREE.MeshBasicMaterial({ color: "#fed263" });
-  globe = new THREE.Mesh(geometry, material);
-  scene.add(globe);
+        // Iluminação
+        const ambientLight = new THREE.AmbientLight(0x404040);
+        scene.add(ambientLight);
 
-  // Animação básica
-  function animate() {
-    requestAnimationFrame(animate);
-    globe.rotation.y += 0.01;
-    renderer.render(scene, camera);
-  }
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+        directionalLight.position.set(5, 3, 5);
+        scene.add(directionalLight);
 
-  animate();
-}
+        // Textura do Globo
+        const textureLoader = new THREE.TextureLoader();
+        textureLoader.load('https://i.imgur.com/8zU6e68.jpg', (texture) => {
+            const geometry = new THREE.SphereGeometry(2, 64, 64);
+            const material = new THREE.MeshStandardMaterial({ map: texture });
+            globe = new THREE.Mesh(geometry, material);
+            scene.add(globe);
 
-// Banco de Dados Simulado
-const cryptoLocations = {
-  "Brasil": [
-    { name: "Caixa Eletrônica Bitcoin", gps: "23.5555, -46.5555" },
-    { name: "Café Crypto", gps: "23.5556, -46.5556" }
-  ],
-  "Estados Unidos": [
-    { name: "Bitcoin ATM NYC", gps: "40.7128, -74.0060" },
-    { name: "Crypto Coffee Shop", gps: "34.0522, -118.2437" }
-  ]
-};
+            // Adicionar Controles de Órbita
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            animate();
+        });
 
-// Função para buscar localizações
-function searchCountry() {
-  const country = document.getElementById('countryInput').value;
-  const resultsContainer = document.getElementById('resultsContainer');
+        // Marcadores (Simulação)
+        addMarker(0.4, 0.8, 0xff0000); // Exemplo de marcador
+        addMarker(-0.5, 0.3, 0x00ff00); // Exemplo de marcador
+    }
 
-  if (cryptoLocations[country]) {
-    resultsContainer.innerHTML = cryptoLocations[country].map(location => `
-      <div class="result-item">
-        <h3>${location.name}</h3>
-        <p>GPS: ${location.gps}</p>
-      </div>
-    `).join('');
-  } else {
-    resultsContainer.innerHTML = `<p>Nenhuma localização encontrada para ${country}.</p>`;
-  }
-}
+    function addMarker(lat, lon, color) {
+        const markerGeometry = new THREE.SphereGeometry(0.05, 16, 16);
+        const markerMaterial = new THREE.MeshBasicMaterial({ color: color });
+        const marker = new THREE.Mesh(markerGeometry, markerMaterial);
 
-initGlobe();
+        const phi = (90 - lat) * Math.PI / 180;
+        const theta = (lon + 180) * Math.PI / 180;
+
+        marker.position.x = 2 * Math.sin(phi) * Math.cos(theta);
+        marker.position.y = 2 * Math.cos(phi);
+        marker.position.z = 2 * Math.sin(phi) * Math.sin(theta);
+
+        globe.add(marker);
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+        if (controls) controls.update();
+        renderer.render(scene, camera);
+    }
+
+    function searchCountry() {
+        const country = document.getElementById('countryInput').value;
+        document.getElementById('resultsContainer').innerHTML = `<p>Resultados para: ${country}</p>`;
+        // Aqui você adicionaria a lógica para buscar e exibir os resultados
+    }
+
+    initGlobe();
 </script>
 </body>
 </html>

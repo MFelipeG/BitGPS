@@ -119,37 +119,15 @@
         directionalLight.position.set(5, 3, 5);
         scene.add(directionalLight);
 
-        // Textura do Globo
-        const textureLoader = new THREE.TextureLoader();
-        textureLoader.load('https://i.imgur.com/8zU6e68.jpg', (texture) => {
-            const geometry = new THREE.SphereGeometry(2, 64, 64);
-            const material = new THREE.MeshStandardMaterial({ map: texture });
-            globe = new THREE.Mesh(geometry, material);
-            scene.add(globe);
+        // Globo sem Textura
+        const geometry = new THREE.SphereGeometry(2, 64, 64);
+        const material = new THREE.MeshStandardMaterial({ color: 0xffffff }); // Cor branca padrão
+        globe = new THREE.Mesh(geometry, material);
+        scene.add(globe);
 
-            // Adicionar Controles de Órbita
-            controls = new THREE.OrbitControls(camera, renderer.domElement);
-            animate();
-        });
-
-        // Marcadores (Simulação)
-        addMarker(0.4, 0.8, 0xff0000); // Exemplo de marcador
-        addMarker(-0.5, 0.3, 0x00ff00); // Exemplo de marcador
-    }
-
-    function addMarker(lat, lon, color) {
-        const markerGeometry = new THREE.SphereGeometry(0.05, 16, 16);
-        const markerMaterial = new THREE.MeshBasicMaterial({ color: color });
-        const marker = new THREE.Mesh(markerGeometry, markerMaterial);
-
-        const phi = (90 - lat) * Math.PI / 180;
-        const theta = (lon + 180) * Math.PI / 180;
-
-        marker.position.x = 2 * Math.sin(phi) * Math.cos(theta);
-        marker.position.y = 2 * Math.cos(phi);
-        marker.position.z = 2 * Math.sin(phi) * Math.sin(theta);
-
-        globe.add(marker);
+        // Controles de Órbita
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+        animate();
     }
 
     function animate() {
@@ -161,7 +139,6 @@
     function searchCountry() {
         const country = document.getElementById('countryInput').value;
         document.getElementById('resultsContainer').innerHTML = `<p>Resultados para: ${country}</p>`;
-        // Aqui você adicionaria a lógica para buscar e exibir os resultados
     }
 
     initGlobe();

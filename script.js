@@ -1,51 +1,72 @@
-// Data of Bitcoin ATMs and stores in various countries
-const database = {
-    "USA": [
-        { "name": "ATM Bitcoin New York", "gps": "40.7128,-74.0060" },
-        { "name": "Bitcoin Store Los Angeles", "gps": "34.0522,-118.2437" },
-        { "name": "Bitcoin ATM Miami", "gps": "25.7617,-80.1918" },
-        { "name": "Bitcoin Exchange Chicago", "gps": "41.8781,-87.6298" }
-    ],
-    "UK": [
-        { "name": "ATM Bitcoin London", "gps": "51.5074,-0.1278" },
-        { "name": "Bitcoin Store Manchester", "gps": "53.4808,-2.2426" },
-        { "name": "Bitcoin Kiosk Birmingham", "gps": "52.4862,-1.8904" }
-    ],
-    "Portugal": [
-        { "name": "ATM Bitcoin Lisbon", "gps": "38.7223,-9.1393" },
-        { "name": "Bitcoin Store Porto", "gps": "41.1579,-8.6291" },
-        { "name": "Bitcoin ATM Faro", "gps": "37.0194,-7.9304" }
-    ],
-    // Additional countries and locations can be added here
-};
-
-// Initialize the map
-const map = L.map('map-container').setView([20, 0], 2);
+// Inicialização do mapa Leaflet
+const map = L.map('map-container').setView([0, 0], 2);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors'
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
-// Search function
-document.getElementById('search-button').addEventListener('click', function () {
-    const country = document.getElementById('country-search').value.trim();
-    const resultsContainer = document.getElementById('results-container');
-    
-    resultsContainer.innerHTML = ""; // Clear previous results
-    map.eachLayer(layer => { if (layer instanceof L.Marker) map.removeLayer(layer); });
+// Banco de dados com 25 países e múltiplos endereços (exemplo com alguns países)
+const database = {
+    "Brasil": [
+        { "nome": "ATM Bitcoin São Paulo 1", "gps": "-23.5505,-46.6333", "endereco": "Av. Paulista, 1000, São Paulo, SP" },
+        { "nome": "Loja Bitcoin Rio 1", "gps": "-22.9068,-43.1729", "endereco": "Rua das Laranjeiras, 500, Rio de Janeiro, RJ" },
+        { "nome": "ATM Bitcoin Curitiba 1", "gps": "-25.4296,-49.2719", "endereco": "Praça Tiradentes, 300, Curitiba, PR" }
+    ],
+    "Portugal": [
+        { "nome": "ATM Bitcoin Lisboa 1", "gps": "38.7223,-9.1393", "endereco": "Praça do Comércio, Lisboa" },
+        { "nome": "Loja Bitcoin Porto 1", "gps": "41.1579,-8.6291", "endereco": "Avenida dos Aliados, Porto" },
+        { "nome": "ATM Bitcoin Coimbra 1", "gps": "40.2111,-8.4116", "endereco": "Praça da República, Coimbra" }
+    ],
+    "Estados Unidos": [
+        { "nome": "ATM Bitcoin Nova York 1", "gps": "40.7128,-74.0060", "endereco": "Times Square, Nova York, NY" },
+        { "nome": "Loja Bitcoin Los Angeles 1", "gps": "34.0522,-118.2437", "endereco": "Hollywood Blvd, Los Angeles, CA" },
+        { "nome": "ATM Bitcoin Chicago 1", "gps": "41.8781,-87.6298", "endereco": "Millennium Park, Chicago, IL" }
+    ],
+    // Adicione mais países conforme necessário
+};
 
-    if (database[country]) {
-        database[country].forEach(location => {
-            const [lat, lng] = location.gps.split(",").map(Number);
-            const marker = L.marker([lat, lng]).addTo(map)
-                .bindPopup(`<b>${location.name}</b><br><a href="https://www.google.com/maps/search/?api=1&query=${lat},${lng}" target="_blank">Get Directions</a>`);
-            
-            resultsContainer.innerHTML += `<p>${location.name} - <a href="https://www.google.com/maps/search/?api=1&query=${lat},${lng}" target="_blank">View on Google Maps</a></p>`;
-        });
+// Função para exibir locais no mapa
+function showLocations(country) {
+    map.eachLayer(layer => {
+        if (layer instanceof L.Marker) {
+            map.removeLayer(layer);
+        }
+    });
 
-        // Center the map on the first location found
-        const [lat, lng] = database[country][0].gps.split(",").map(Number);
-        map.setView([lat, lng], 10);
+    const locations = database[country];
+    if (!locations) {
+        alert("País não encontrado no banco de dados.");
+        return;
+    }
+
+    locations.forEach(location => {
+        const [lat, lon] = location.gps.split(",");
+        const marker = L.marker([lat, lon]).addTo(map);
+
+        // Criar botão "Como Chegar"
+        const popupContent = `
+            <b>${location.nome}</b><br>
+            <p>${location.endereco}</p>
+            <a href="https://www.google.com/maps/search/?api=1&query=${lat},${lon}" target="_blank">
+                <button style="background-color:#d4af37; color:black; border:none; padding:5px; cursor:pointer;">
+                    Como Chegar
+                </button>
+            </a>
+        `;
+
+        marker.bindPopup(popupContent);
+    });
+
+    // Ajustar a visão do mapa para os locais encontrados
+    const bounds = locations.map(loc => loc.gps.split(",").map(Number));
+    map.fitBounds(bounds);
+}
+
+// Evento de busca
+document.getElementById("search-button").addEventListener("click", () => {
+    const country = document.getElementById("country-search").value.trim();
+    if (country) {
+        showLocations(country);
     } else {
-        resultsContainer.innerHTML = `<p>No locations found for ${country}.</p>`;
+        alert("Digite um país para buscar.");
     }
 });

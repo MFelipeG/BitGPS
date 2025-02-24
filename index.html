@@ -15,7 +15,7 @@
     }
 
     header {
-      background: linear-gradient(90deg, #09eab4, #2c2443);
+      background: linear-gradient(90deg, #fed263, #a45208);
       color: white;
       text-align: center;
       padding: 20px;
@@ -53,6 +53,8 @@
       padding: 10px;
       font-size: 16px;
       margin-right: 10px;
+      background-color: #f9a410;
+      color: #000000;
     }
 
     .results-container {
@@ -60,7 +62,7 @@
     }
 
     .result-item {
-      background-color: #2c2443;
+      background-color: #a45208;
       border-radius: 10px;
       padding: 15px;
       margin-bottom: 10px;
@@ -115,6 +117,50 @@ function initGlobe() {
   renderer.setSize(window.innerWidth * 0.8, window.innerHeight * 0.5);
 
   const geometry = new THREE.SphereGeometry(2, 32, 32);
-  
-const material=new THREE.MeshBasicMaterial({color:"#09eab"});
-  
+  const material = new THREE.MeshBasicMaterial({ color: "#fed263" });
+  globe = new THREE.Mesh(geometry, material);
+  scene.add(globe);
+
+  // Animação básica
+  function animate() {
+    requestAnimationFrame(animate);
+    globe.rotation.y += 0.01;
+    renderer.render(scene, camera);
+  }
+
+  animate();
+}
+
+// Banco de Dados Simulado
+const cryptoLocations = {
+  "Brasil": [
+    { name: "Caixa Eletrônica Bitcoin", gps: "23.5555, -46.5555" },
+    { name: "Café Crypto", gps: "23.5556, -46.5556" }
+  ],
+  "Estados Unidos": [
+    { name: "Bitcoin ATM NYC", gps: "40.7128, -74.0060" },
+    { name: "Crypto Coffee Shop", gps: "34.0522, -118.2437" }
+  ]
+};
+
+// Função para buscar localizações
+function searchCountry() {
+  const country = document.getElementById('countryInput').value;
+  const resultsContainer = document.getElementById('resultsContainer');
+
+  if (cryptoLocations[country]) {
+    resultsContainer.innerHTML = cryptoLocations[country].map(location => `
+      <div class="result-item">
+        <h3>${location.name}</h3>
+        <p>GPS: ${location.gps}</p>
+      </div>
+    `).join('');
+  } else {
+    resultsContainer.innerHTML = `<p>Nenhuma localização encontrada para ${country}.</p>`;
+  }
+}
+
+initGlobe();
+</script>
+</body>
+</html>

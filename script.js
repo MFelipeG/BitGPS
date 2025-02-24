@@ -84,5 +84,24 @@ const database = {
     "Espanha": [
         { "nome": "ATM Bitcoin Madrid 1", "gps": "40.4168,-3.7038" },
         { "nome": "Loja Bitcoin Barcelona 1", "gps": "41.3851,2.1734" },
-        { "nome": "ATM Bitcoin Valência 1", "gps": "
-            
+        { "nome": "ATM Bitcoin Valência 1", "gps": "39.4699,-0.3774" }
+    ],
+    "Argentina": [
+        { "nome": "ATM Bitcoin Buenos Aires 1", "gps": "-34.6037,-58.3816" },
+        { "nome": "Loja Bitcoin Córdoba 1", "gps": "-31.4170,-64.1833" },
+        { "nome": "ATM Bitcoin Rosário 1", "gps": "-32.9468,-60.6393" }
+    ],
+    "México": [
+        { "nome": "ATM Bitcoin Cidade do México 1", "gps": "19.4326,-99.1332" },
+        { "nome": "Loja Bitcoin Guadalajara 1", "gps": "20.6597,-103.3496" },
+        { "nome": "ATM Bitcoin Monterrey 1", "gps": "25.6866,-100.3161" }
+    ],
+    "Índia": [
+        { "nome": "ATM Bitcoin Nova Deli 1", "gps": "28.6139,77.2090" },
+        { "nome": "Loja Bitcoin Mumbai 1", "gps": "19.0760,72.8777" },
+        { "nome": "ATM Bitcoin Bangalore 1", "gps": "12.9716,77.5946" }
+    ],
+    "China": [
+        { "nome": "ATM Bitcoin Pequim 1", "gps": "39.9042,116.4074" },
+        { "nome": "Loja Bitcoin Xangai 1", "gps": "31.2304,121.4737" },
+        

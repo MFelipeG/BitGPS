@@ -1,28 +1,30 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mapa Bitcoin</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <title>Bitcoin ATM & Stores Finder</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 </head>
 <body>
 
-    <header id="search-container">
-        <input type="text" id="country-search" placeholder="Pesquisar país...">
-        <button id="search-button">Buscar</button>
-    </header>
-
-    <main id="results-container"></main>
+    <div id="search-container">
+        <h2>Find Bitcoin ATMs and Stores</h2>
+        <input type="text" id="country-search" placeholder="Enter a country...">
+        <button id="search-button">Search</button>
+    </div>
 
     <div id="map-container"></div>
 
+    <div id="results-container"></div>
+
     <footer id="footer">
-        <p>Desenvolvido por: Marlon Felipe</p>
+        Created by <strong>Marlon Felipe</strong>
     </footer>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="script.js"></script>
+
 </body>
 </html>

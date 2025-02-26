@@ -3,29 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BitGPS - ATMs e Lojas de Bitcoin</title>
-    <link rel="stylesheet" href="style.css">
-    <script defer src="script.js"></script>
+    <title>BitGPS - Locais que Aceitam Bitcoin</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #map { height: 500px; }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>BitGPS - Encontre ATMs e Lojas de Bitcoin</h1>
-    </header>
-    <main>
-        <div class="search-container">
-            <input type="text" id="country-search" placeholder="Digite um país">
-            <button id="search-button">Buscar</button>
-        </div>
-        <div class="filter-container">
-            <button id="show-atms">Ver ATMs</button>
-            <button id="show-stores">Ver Lojas</button>
-            <button id="show-favorites">Ver Favoritos</button>
-        </div>
-        <div id="map-container"></div>
-    </main>
-    <footer>
-        <p>Desenvolvido por M. Felipe</p>
-        <p>"Navegue pelo mundo das criptomoedas com precisão!"</p>
-    </footer>
+    <h1>Locais que Aceitam Bitcoin</h1>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        // Inicializa o mapa
+        var map = L.map('map').setView([20, 0], 2);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Função para obter dados da API do Coinmap
+        async function fetchCoinmapData() {
+            try {
+                const response = await fetch('https://coinmap.org/api/v1/venues/');
+                const data = await response.json();
+                return data.venues;
+            } catch (error) {
+                console.error('Erro ao obter dados do Coinmap:', error);
+                return [];
+            }
+        }
+
+        // Função para adicionar marcadores no mapa
+        function addMarkers(venues) {
+            venues.forEach(venue => {
+                const marker = L.marker([venue.lat, venue.lon]).addTo(map);
+                marker.bindPopup(`<b>${venue.name}</b><br>${venue.city}, ${venue.country}`);
+            });
+        }
+
+        // Obtém os dados e adiciona os marcadores
+        fetchCoinmapData().then(venues => {
+            addMarkers(venues);
+        });
+    </script>
 </body>
 </html>

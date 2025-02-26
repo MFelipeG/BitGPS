@@ -1,0 +1,36 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1a1a1a;
+    color: white;
+    text-align: center;
+}
+header {
+    background-color: #ff9800;
+    padding: 10px;
+}
+.search-container, .filter-container {
+    margin: 10px;
+}
+button {
+    padding: 10px;
+    margin: 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #ff9800;
+    color: white;
+    font-weight: bold;
+}
+#map-container {
+    height: 500px;
+    width: 80%;
+    margin: auto;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+footer {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #333;
+}

@@ -72,30 +72,41 @@
 
         const database = {
             "Brasil": [
-                { "nome": "ATM Bitcoin São Paulo", "gps": "-23.5505,-46.6333", "endereco": "Av. Paulista, 1000, São Paulo, SP" },
-                { "nome": "Loja Bitcoin Rio", "gps": "-22.9068,-43.1729", "endereco": "Rua das Laranjeiras, 500, Rio de Janeiro, RJ" }
+                { "nome": "ATM Bitcoin São Paulo", "gps": "-23.5505,-46.6333", "endereco": "Av. Paulista, 1000, São Paulo, SP" }
             ],
             "Portugal": [
-                { "nome": "ATM Bitcoin Lisboa", "gps": "38.7223,-9.1393", "endereco": "Praça do Comércio, Lisboa" },
-                { "nome": "Loja Bitcoin Porto", "gps": "41.1579,-8.6291", "endereco": "Avenida dos Aliados, Porto" }
+                { "nome": "ATM Bitcoin Lisboa", "gps": "38.7223,-9.1393", "endereco": "Praça do Comércio, Lisboa" }
             ],
-            "Estados Unidos": [
-                { "nome": "ATM Bitcoin Nova York", "gps": "40.7128,-74.0060", "endereco": "Times Square, Nova York, NY" },
-                { "nome": "Loja Bitcoin Los Angeles", "gps": "34.0522,-118.2437", "endereco": "Hollywood Blvd, Los Angeles, CA" }
+            "Alemanha": [
+                { "nome": "ATM Bitcoin Berlim", "gps": "52.5200,13.4050", "endereco": "Alexanderplatz, Berlim" }
             ],
-            "Espanha": [
-                { "nome": "ATM Bitcoin Madri", "gps": "40.4168,-3.7038", "endereco": "Puerta del Sol, Madri" },
-                { "nome": "Loja Bitcoin Barcelona", "gps": "41.3851,2.1734", "endereco": "La Rambla, Barcelona" }
+            "Itália": [
+                { "nome": "ATM Bitcoin Roma", "gps": "41.9028,12.4964", "endereco": "Piazza Venezia, Roma" }
             ],
-            "França": [
-                { "nome": "ATM Bitcoin Paris", "gps": "48.8566,2.3522", "endereco": "Champs-Élysées, Paris" },
-                { "nome": "Loja Bitcoin Lyon", "gps": "45.7640,4.8357", "endereco": "Place Bellecour, Lyon" }
+            "Canadá": [
+                { "nome": "ATM Bitcoin Toronto", "gps": "43.6532,-79.3832", "endereco": "Yonge Street, Toronto" }
             ],
-            "Reino Unido": [
-                { "nome": "ATM Bitcoin Londres", "gps": "51.5074,-0.1278", "endereco": "Piccadilly Circus, Londres" },
-                { "nome": "Loja Bitcoin Manchester", "gps": "53.4808,-2.2426", "endereco": "Market Street, Manchester" }
+            "Austrália": [
+                { "nome": "ATM Bitcoin Sydney", "gps": "-33.8688,151.2093", "endereco": "Opera House, Sydney" }
+            ],
+            "México": [
+                { "nome": "ATM Bitcoin Cidade do México", "gps": "19.4326,-99.1332", "endereco": "Zócalo, Cidade do México" }
+            ],
+            "Argentina": [
+                { "nome": "ATM Bitcoin Buenos Aires", "gps": "-34.6037,-58.3816", "endereco": "Obelisco, Buenos Aires" }
+            ],
+            "Japão": [
+                { "nome": "ATM Bitcoin Tóquio", "gps": "35.6895,139.6917", "endereco": "Shibuya, Tóquio" }
+            ],
+            "Índia": [
+                { "nome": "ATM Bitcoin Mumbai", "gps": "19.0760,72.8777", "endereco": "Gateway of India, Mumbai" }
+            ],
+            "África do Sul": [
+                { "nome": "ATM Bitcoin Joanesburgo", "gps": "-26.2041,28.0473", "endereco": "Nelson Mandela Square, Joanesburgo" }
+            ],
+            "Rússia": [
+                { "nome": "ATM Bitcoin Moscou", "gps": "55.7558,37.6173", "endereco": "Praça Vermelha, Moscou" }
             ]
-            // Adicione mais países e locais conforme necessário...
         };
 
         function loadAllLocations() {
@@ -185,17 +196,6 @@
             map.fitBounds(bounds);
         }
 
-        function getUserLocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(position => {
-                    const { latitude, longitude } = position.coords;
-                    map.setView([latitude, longitude], 12);
-                }, () => {
-                    alert("Não foi possível obter sua localização.");
-                });
-            }
-        }
-
         document.getElementById("search-button").addEventListener("click", () => {
             const country = document.getElementById("country-search").value.trim();
             if (country) {
@@ -205,7 +205,6 @@
             }
         });
 
-        getUserLocation();
         loadAllLocations();
     </script>
 

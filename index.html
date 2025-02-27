@@ -13,44 +13,33 @@
             font-family: Arial, sans-serif;
             text-align: center;
         }
-
         h2 {
             color: #FFD700;
         }
-
-        input {
+        select, button {
             padding: 10px;
-            width: 250px;
+            margin: 5px;
             border-radius: 5px;
             border: none;
             outline: none;
             background: #1E1E1E;
             color: white;
+            font-weight: bold;
         }
-
         button {
-            padding: 10px;
-            margin: 5px;
-            border: none;
-            border-radius: 5px;
             cursor: pointer;
             background-color: #FFD700;
-            color: black;
-            font-weight: bold;
             transition: 0.3s;
         }
-
         button:hover {
             background-color: #FFA500;
         }
-
         #map-container {
             height: 500px;
             border-radius: 10px;
             overflow: hidden;
             margin-top: 10px;
         }
-
         .leaflet-popup-content {
             text-align: center;
         }
@@ -59,9 +48,10 @@
 <body>
 
     <h2>🟡 BitGPS - Encontre ATMs e Lojas de Bitcoin 🟡</h2>
-    <input type="text" id="country-search" placeholder="Digite um país">
+    <select id="country-select">
+        <option value="">Selecione um país</option>
+    </select>
     <button id="search-button">Buscar</button>
-    <button onclick="showFavorites()">Ver Favoritos</button>
     <div id="map-container"></div>
 
     <script>
@@ -70,93 +60,62 @@
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        let allLocations = [];
-
-        async function fetchLocations() {
+        async function fetchATMLocations() {
             try {
                 const response = await fetch('https://coinmap.org/api/v1/venues/');
                 const data = await response.json();
-                allLocations = data.venues;
-                loadAllLocations();
+                return data.venues;
             } catch (error) {
-                console.error('Erro ao buscar dados da API:', error);
+                console.error("Erro ao carregar os dados da API:", error);
+                alert("Erro ao carregar os locais. Tente novamente mais tarde.");
+                return [];
             }
         }
 
-        function loadAllLocations() {
-            allLocations.forEach(addMarker);
+        async function populateCountryDropdown() {
+            const venues = await fetchATMLocations();
+            const countries = [...new Set(venues.map(v => v.country))].sort();
+            const dropdown = document.getElementById('country-select');
+            countries.forEach(country => {
+                const option = document.createElement('option');
+                option.value = country;
+                option.textContent = country;
+                dropdown.appendChild(option);
+            });
         }
 
         function addMarker(location) {
-            const marker = L.marker([location.lat, location.lon]).addTo(map);
-            const isFavorite = checkFavorite(location.id);
-
+            const { lat, lon, name, address } = location;
+            const marker = L.marker([lat, lon]).addTo(map);
             const popupContent = `
-                <b>${location.name}</b><br>
-                <p>${location.address}</p>
-                <a href="https://www.google.com/maps/search/?api=1&query=${location.lat},${location.lon}" target="_blank">
+                <b>${name}</b><br>
+                <p>${address}</p>
+                <a href="https://www.google.com/maps/search/?api=1&query=${lat},${lon}" target="_blank">
                     <button style="background-color:#FFD700;">Como Chegar</button>
                 </a>
-                <button onclick="toggleFavorite('${location.id}')" style="background-color:${isFavorite ? '#ff0000' : '#FFD700'};">
-                    ${isFavorite ? 'Remover dos Favoritos' : 'Adicionar aos Favoritos'}
-                </button>
             `;
-
             marker.bindPopup(popupContent);
         }
 
-        function showLocations(country) {
+        async function showLocationsByCountry() {
+            const country = document.getElementById('country-select').value;
+            if (!country) {
+                alert("Selecione um país!");
+                return;
+            }
             map.eachLayer(layer => {
                 if (layer instanceof L.Marker) {
                     map.removeLayer(layer);
                 }
             });
-
-            const locations = allLocations.filter(loc => loc.country === country);
-            if (locations.length === 0) {
-                alert("País não encontrado no banco de dados.");
+            const venues = await fetchATMLocations();
+            const countryLocations = venues.filter(v => v.country === country);
+            if (countryLocations.length === 0) {
+                alert("Nenhuma localização encontrada para este país.");
                 return;
             }
-
-            locations.forEach(addMarker);
-
-            const bounds = locations.map(loc => [loc.lat, loc.lon]);
-            map.fitBounds(bounds);
-        }
-
-        function checkFavorite(id) {
-            const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-            return favorites.includes(id);
-        }
-
-        function toggleFavorite(id) {
-            let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-            if (favorites.includes(id)) {
-                favorites = favorites.filter(fav => fav !== id);
-            } else {
-                favorites.push(id);
-            }
-            localStorage.setItem('favorites', JSON.stringify(favorites));
-            loadAllLocations();
-        }
-
-        function showFavorites() {
-            map.eachLayer(layer => {
-                if (layer instanceof L.Marker) {
-                    map.removeLayer(layer);
-                }
-            });
-
-            const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-            if (favorites.length === 0) {
-                alert("Você não tem locais favoritos.");
-                return;
-            }
-
-            const favLocations = allLocations.filter(loc => favorites.includes(loc.id));
-            favLocations.forEach(addMarker);
-
-            const bounds = favLocations.map(loc => [loc.lat, loc.lon]);
+            countryLocations.forEach(addMarker);
+            const bounds = countryLocations.map(v => [v.lat, v.lon]);
             map.fitBounds(bounds);
         }
 
@@ -166,23 +125,16 @@
                     const { latitude, longitude } = position.coords;
                     map.setView([latitude, longitude], 12);
                 }, () => {
-                    alert("Não foi possível obter sua localização.");
+                    console.warn("Geolocalização negada pelo usuário.");
                 });
             }
         }
 
-        document.getElementById("search-button").addEventListener("click", () => {
-            const country = document.getElementById("country-search").value.trim();
-            if (country) {
-                showLocations(country);
-            } else {
-                alert("Digite um país para buscar.");
-            }
-        });
-
+        document.getElementById("search-button").addEventListener("click", showLocationsByCountry);
+        
         getUserLocation();
-        fetchLocations();
+        populateCountryDropdown();
     </script>
 
 </body>
-    </html>
+</html>

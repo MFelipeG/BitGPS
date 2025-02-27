@@ -107,4 +107,87 @@
 
         function loadAllLocations() {
             clearMap();
-            for (const country in database)
+            for (const country in database) {
+                database[country].forEach(addMarker);
+            }
+        }
+
+        function showLocations(country) {
+            clearMap();
+            const locations = database[country];
+            if (!locations) {
+                alert("País não encontrado no banco de dados.");
+                return;
+            }
+            locations.forEach(addMarker);
+            const bounds = locations.map(loc => loc.gps.split(",").map(Number));
+            map.fitBounds(bounds);
+        }
+
+        function checkFavorite(gps) {
+            const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+            return favorites.includes(gps);
+        }
+
+        function toggleFavorite(gps) {
+            let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+            if (favorites.includes(gps)) {
+                favorites = favorites.filter(fav => fav !== gps);
+            } else {
+                favorites.push(gps);
+            }
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            loadAllLocations();
+        }
+
+        function showFavorites() {
+            clearMap();
+            const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+            if (favorites.length === 0) {
+                alert("Você não tem locais favoritos.");
+                return;
+            }
+            let favLocations = [];
+            for (const country in database) {
+                database[country].forEach(location => {
+                    if (favorites.includes(location.gps)) {
+                        favLocations.push(location);
+                        addMarker(location);
+                    }
+                });
+            }
+            const bounds = favLocations.map(loc => loc.gps.split(",").map(Number));
+            map.fitBounds(bounds);
+        }
+
+        function clearMap() {
+            markers.forEach(marker => map.removeLayer(marker));
+            markers = [];
+        }
+
+        function getUserLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const { latitude, longitude } = position.coords;
+                    map.setView([latitude, longitude], 12);
+                }, () => {
+                    alert("Não foi possível obter sua localização.");
+                });
+            }
+        }
+
+        document.getElementById("search-button").addEventListener("click", () => {
+            const country = document.getElementById("country-search").value.trim();
+            if (country) {
+                showLocations(country);
+            } else {
+                alert("Digite um país para buscar.");
+            }
+        });
+
+        getUserLocation();
+        loadAllLocations();
+    </script>
+
+</body>
+</html>

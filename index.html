@@ -72,11 +72,15 @@
 
         // Ícone personalizado 📍 (agulha vermelha)
         const redPinIcon = L.icon({
-            iconUrl: 'https://upload.wikimedia.org/wikipedia/commons/e/ec/Red_pog.svg',
-            iconSize: [30, 40], 
-            iconAnchor: [15, 40], 
-            popupAnchor: [0, -30]
-        });
+    iconUrl: 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="40" height="40">
+            <path fill="red" d="M12 2C8.13 2 5 5.13 5 9c0 3.68 2.56 6.79 6 7.91V22l1-2 1 2v-5.09c3.44-1.12 6-4.23 6-7.91 0-3.87-3.13-7-7-7zm0 10c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"/>
+        </svg>
+    `),
+    iconSize: [30, 40],
+    iconAnchor: [15, 40],
+    popupAnchor: [0, -30]
+});
 
         const database = {
             "Brasil": [

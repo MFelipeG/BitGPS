@@ -13,37 +13,45 @@
             font-family: Arial, sans-serif;
             text-align: center;
         }
+
         h2 {
             color: #FFD700;
         }
+
         input, button {
             padding: 10px;
-            border-radius: 5px;
-            border: none;
-            outline: none;
             margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: bold;
         }
+
         input {
             width: 250px;
             background: #1E1E1E;
             color: white;
+            border: 1px solid #FFD700;
+            text-align: center;
         }
+
         button {
-            cursor: pointer;
             background-color: #FFD700;
             color: black;
-            font-weight: bold;
-            transition: 0.3s;
         }
+
         button:hover {
             background-color: #FFA500;
         }
+
         #map-container {
             height: 500px;
             border-radius: 10px;
             overflow: hidden;
             margin-top: 10px;
         }
+
         .leaflet-popup-content {
             text-align: center;
         }
@@ -52,19 +60,24 @@
 <body>
 
     <h2>🟡 BitGPS - Encontre ATMs e Lojas de Bitcoin 🟡</h2>
+    
     <input type="text" id="country-search" placeholder="Digite um país">
     <button id="search-button">Buscar</button>
-    <button onclick="showFavorites()">Ver Favoritos</button>
-    <button onclick="clearMap()">Limpar Mapa</button>
+    <button id="btn-todos">TODOS</button>
+    <button id="btn-atms">ATMs</button>
+    <button id="btn-comercios">Comércios</button>
+    <button id="btn-limpar">Limpar Mapa</button>
+    <button id="btn-favoritos">Ver Favoritos</button>
+
     <div id="map-container"></div>
 
     <script>
-        const map = L.map('map-container').setView([-14.235, -51.9253], 4); // Brasil no centro
+        const map = L.map('map-container').setView([-14.235, -51.9253], 4); // Centro no Brasil
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        // Novo ícone vermelho em SVG embutido
+        // Ícone Personalizado 📍 (agulha vermelha)
         const redPinIcon = L.icon({
             iconUrl: 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="40" height="40">
@@ -78,92 +91,59 @@
 
         const database = {
             "Brasil": [
-                { "nome": "ATM Bitcoin São Paulo", "gps": "-23.561414,-46.655881", "endereco": "Av. Paulista, 1000, São Paulo, SP" },
-                { "nome": "Loja Bitcoin Rio de Janeiro", "gps": "-22.908333,-43.196388", "endereco": "Rua da Assembleia, 10, Centro, Rio de Janeiro, RJ" },
-                { "nome": "ATM Bitcoin Curitiba", "gps": "-25.429596,-49.271272", "endereco": "Rua XV de Novembro, 500, Curitiba, PR" }
+                { "nome": "ATM Bitcoin São Paulo", "gps": "-23.561414,-46.655881", "endereco": "Av. Paulista, 1000, SP", "tipo": "ATM" },
+                { "nome": "Loja Bitcoin Campinas", "gps": "-22.909938,-47.062633", "endereco": "Av. Barão de Itapura, 1500, SP", "tipo": "Comércio" }
             ]
         };
 
-        let markers = [];
+        function limparMapa() {
+            map.eachLayer(layer => {
+                if (layer instanceof L.Marker) {
+                    map.removeLayer(layer);
+                }
+            });
+        }
 
-        function addMarker(location) {
-            const [lat, lon] = location.gps.split(",");
-            const marker = L.marker([lat, lon], { icon: redPinIcon }).addTo(map);
-            markers.push(marker);
-
-            const isFavorite = checkFavorite(location.gps);
-            const popupContent = `
-                <b>${location.nome}</b><br>
-                <p>${location.endereco}</p>
+        function adicionarMarcador(local) {
+            const [lat, lon] = local.gps.split(",");
+            const marcador = L.marker([lat, lon], { icon: redPinIcon }).addTo(map);
+            marcador.bindPopup(`
+                <b>${local.nome}</b><br>
+                <p>${local.endereco}</p>
                 <a href="https://www.google.com/maps/search/?api=1&query=${lat},${lon}" target="_blank">
                     <button style="background-color:#FFD700;">Como Chegar</button>
                 </a>
-                <button onclick="toggleFavorite('${location.gps}')" style="background-color:${isFavorite ? '#ff0000' : '#FFD700'};">
-                    ${isFavorite ? 'Remover dos Favoritos' : 'Adicionar aos Favoritos'}
-                </button>
-            `;
-            marker.bindPopup(popupContent);
+            `);
         }
 
-        function loadAllLocations() {
-            clearMap();
-            for (const country in database) {
-                database[country].forEach(addMarker);
-            }
-        }
-
-        function showLocations(country) {
-            clearMap();
-            const locations = database[country];
-            if (!locations) {
-                alert("País não encontrado no banco de dados.");
-                return;
-            }
-            locations.forEach(addMarker);
-            const bounds = locations.map(loc => loc.gps.split(",").map(Number));
-            map.fitBounds(bounds);
-        }
-
-        function checkFavorite(gps) {
-            const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-            return favorites.includes(gps);
-        }
-
-        function toggleFavorite(gps) {
-            let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-            if (favorites.includes(gps)) {
-                favorites = favorites.filter(fav => fav !== gps);
-            } else {
-                favorites.push(gps);
-            }
-            localStorage.setItem('favorites', JSON.stringify(favorites));
-            loadAllLocations();
-        }
-
-        function showFavorites() {
-            clearMap();
-            const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-            if (favorites.length === 0) {
-                alert("Você não tem locais favoritos.");
-                return;
-            }
-            let favLocations = [];
-            for (const country in database) {
-                database[country].forEach(location => {
-                    if (favorites.includes(location.gps)) {
-                        favLocations.push(location);
-                        addMarker(location);
+        function exibirLocais(tipo) {
+            limparMapa();
+            for (const pais in database) {
+                database[pais].forEach(local => {
+                    if (tipo === "TODOS" || local.tipo === tipo) {
+                        adicionarMarcador(local);
                     }
                 });
             }
-            const bounds = favLocations.map(loc => loc.gps.split(",").map(Number));
+        }
+
+        function buscarPais() {
+            const pais = document.getElementById("country-search").value.trim();
+            if (!database[pais]) {
+                alert("País não encontrado no banco de dados.");
+                return;
+            }
+            limparMapa();
+            database[pais].forEach(adicionarMarcador);
+            const bounds = database[pais].map(loc => loc.gps.split(",").map(Number));
             map.fitBounds(bounds);
         }
 
-        function clearMap() {
-            markers.forEach(marker => map.removeLayer(marker));
-            markers = [];
-        }
+        document.getElementById("search-button").addEventListener("click", buscarPais);
+        document.getElementById("btn-todos").addEventListener("click", () => exibirLocais("TODOS"));
+        document.getElementById("btn-atms").addEventListener("click", () => exibirLocais("ATM"));
+        document.getElementById("btn-comercios").addEventListener("click", () => exibirLocais("Comércio"));
+        document.getElementById("btn-limpar").addEventListener("click", limparMapa);
 
         function getUserLocation() {
             if (navigator.geolocation) {
@@ -176,17 +156,7 @@
             }
         }
 
-        document.getElementById("search-button").addEventListener("click", () => {
-            const country = document.getElementById("country-search").value.trim();
-            if (country) {
-                showLocations(country);
-            } else {
-                alert("Digite um país para buscar.");
-            }
-        });
-
         getUserLocation();
-        loadAllLocations();
     </script>
 
 </body>

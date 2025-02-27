@@ -36,6 +36,7 @@
     var atmMarkers = [];
     var commerceMarkers = [];
 
+    // Ícone do marcador no formato de agulha vermelha 📍
     const redPinIcon = L.icon({
         iconUrl: 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="40" height="40">
@@ -77,7 +78,7 @@
         document.getElementById('message').innerText = "Selecione um país para visualizar os locais";
     }
 
-    // Exemplo de pontos - pode expandir essa lista
+    // Adicionando alguns ATMs e comércios no Brasil (pode expandir depois)
     addMarker(-23.5505, -46.6333, "ATM Bitcoin - São Paulo", "atm");
     addMarker(-22.9068, -43.1729, "Comércio Bitcoin - Rio de Janeiro", "commerce");
     addMarker(-19.9167, -43.9345, "ATM Bitcoin - Belo Horizonte", "atm");

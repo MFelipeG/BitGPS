@@ -72,12 +72,13 @@
     <div id="map-container"></div>
 
     <script>
-        const map = L.map('map-container').setView([0, 0], 2); // Centro global
+        // Inicializa o mapa
+        const map = L.map('map-container').setView([0, 0], 2);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        // Ícone Personalizado 📍 (agulha vermelha)
+        // Ícone personalizado
         const redPinIcon = L.icon({
             iconUrl: 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="40" height="40">
@@ -96,16 +97,18 @@
                     map.removeLayer(layer);
                 }
             });
+            console.log('Mapa limpo');
         }
 
         // Função para adicionar marcador
         function adicionarMarcador(local) {
-            const lat = local.lat; // A API usa 'lat' e 'lon'
+            const lat = local.lat;
             const lon = local.lon;
             const nome = local.tags.name || 'Local sem nome';
             const endereco = local.tags['addr:full'] || local.tags.address || 'Endereço não disponível';
-            const tipo = local.tags['bitcoin:atm'] === 'yes' ? 'ATM' : 'Comércio'; // Melhor diferenciação
+            const tipo = local.tags['bitcoin:atm'] === 'yes' ? 'ATM' : 'Comércio';
 
+            console.log(`Adicionando marcador: ${nome} em [${lat}, ${lon}]`); // Log de cada marcador
             const marcador = L.marker([lat, lon], { icon: redPinIcon }).addTo(map);
             marcador.bindPopup(`
                 <b>${nome}</b><br>
@@ -120,64 +123,71 @@
             `);
         }
 
-        // Função para carregar locais da API
-        function carregarLocaisGlobais(tipoFiltro = 'TODOS') {
-            fetch('https://api.btcmap.org/v2/places')
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Dados carregados da API:', data); // Log para depuração
-                    limparMapa();
-                    const bounds = [];
-                    data.forEach(local => {
-                        const tipo = local.tags['bitcoin:atm'] === 'yes' ? 'ATM' : 'Comércio';
-                        if (tipoFiltro === 'TODOS' || tipo === tipoFiltro) {
-                            adicionarMarcador(local);
-                            bounds.push([local.lat, local.lon]);
-                        }
-                    });
-                    if (bounds.length > 0) {
-                        map.fitBounds(bounds);
-                    } else {
-                        alert('Nenhum local encontrado para este filtro.');
+        // Função para carregar locais
+        async function carregarLocaisGlobais(tipoFiltro = 'TODOS') {
+            try {
+                const response = await fetch('https://api.btcmap.org/v2/places');
+                if (!response.ok) throw new Error('Resposta da API inválida');
+                const data = await response.json();
+                console.log('Dados da API:', data); // Log dos dados brutos
+
+                limparMapa();
+                const bounds = [];
+                data.forEach(local => {
+                    const tipo = local.tags['bitcoin:atm'] === 'yes' ? 'ATM' : 'Comércio';
+                    if (tipoFiltro === 'TODOS' || tipo === tipoFiltro) {
+                        adicionarMarcador(local);
+                        bounds.push([local.lat, local.lon]);
                     }
-                })
-                .catch(error => {
-                    console.error('Erro ao carregar locais:', error);
-                    alert('Erro ao carregar os dados. Verifique sua conexão ou tente novamente.');
                 });
+                if (bounds.length > 0) {
+                    map.fitBounds(bounds);
+                    console.log(`${bounds.length} locais exibidos`);
+                } else {
+                    alert('Nenhum local encontrado para este filtro.');
+                }
+            } catch (error) {
+                console.error('Erro ao carregar locais:', error);
+                alert('Erro ao carregar dados. Veja o console para detalhes.');
+            }
         }
 
         // Função para buscar por país
-        function buscarPais() {
+        async function buscarPais() {
             const pais = document.getElementById("country-search").value.trim().toLowerCase();
             if (!pais) {
                 alert('Digite um país para buscar.');
                 return;
             }
-            fetch('https://api.btcmap.org/v2/places')
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Dados da API para busca:', data); // Log para depuração
-                    limparMapa();
-                    const bounds = [];
-                    const locaisFiltrados = data.filter(local => {
-                        const country = (local.tags['addr:country'] || local.tags.country || '').toLowerCase();
-                        return country.includes(pais);
-                    });
-                    if (locaisFiltrados.length === 0) {
-                        alert(`Nenhum local encontrado para "${pais}". Tente outro nome (ex.: Brazil, United States).`);
-                        return;
-                    }
-                    locaisFiltrados.forEach(local => {
-                        adicionarMarcador(local);
-                        bounds.push([local.lat, local.lon]);
-                    });
-                    map.fitBounds(bounds);
-                })
-                .catch(error => {
-                    console.error('Erro ao buscar país:', error);
-                    alert('Erro ao buscar. Verifique sua conexão ou tente novamente.');
+
+            try {
+                const response = await fetch('https://api.btcmap.org/v2/places');
+                if (!response.ok) throw new Error('Resposta da API inválida');
+                const data = await response.json();
+                console.log('Dados da API para busca:', data);
+
+                limparMapa();
+                const bounds = [];
+                const locaisFiltrados = data.filter(local => {
+                    const country = (local.tags['addr:country'] || local.tags.country || '').toLowerCase();
+                    return country.includes(pais);
                 });
+
+                if (locaisFiltrados.length === 0) {
+                    alert(`Nenhum local encontrado para "${pais}". Tente "Brazil", "United States", etc.');
+                    return;
+                }
+
+                locaisFiltrados.forEach(local => {
+                    adicionarMarcador(local);
+                    bounds.push([local.lat, local.lon]);
+                });
+                map.fitBounds(bounds);
+                console.log(`${locaisFiltrados.length} locais encontrados para "${pais}"`);
+            } catch (error) {
+                console.error('Erro ao buscar país:', error);
+                alert('Erro ao buscar. Veja o console para detalhes.');
+            }
         }
 
         // Função para favoritar/desfavoritar
@@ -223,7 +233,7 @@
             map.fitBounds(bounds);
         }
 
-        // Listeners dos botões
+        // Adicionar listeners
         document.getElementById("search-button").addEventListener("click", buscarPais);
         document.getElementById("btn-todos").addEventListener("click", () => carregarLocaisGlobais("TODOS"));
         document.getElementById("btn-atms").addEventListener("click", () => carregarLocaisGlobais("ATM"));
@@ -231,19 +241,9 @@
         document.getElementById("btn-limpar").addEventListener("click", limparMapa);
         document.getElementById("btn-favoritos").addEventListener("click", mostrarFavoritos);
 
-        // Geolocalização do usuário
-        function getUserLocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(position => {
-                    const { latitude, longitude } = position.coords;
-                    map.setView([latitude, longitude], 12);
-                }, () => {
-                    alert("Não foi possível obter sua localização.");
-                });
-            }
-        }
-
-        getUserLocation();
+        // Teste inicial
+        console.log('Página carregada. Testando API...');
+        carregarLocaisGlobais("TODOS"); // Carrega todos os locais ao iniciar
     </script>
 
 </body>

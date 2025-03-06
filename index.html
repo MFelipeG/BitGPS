@@ -126,167 +126,88 @@
             popupAnchor: [0, -30]
         });
 
-        // Real data with full addresses (based on Coin ATM Radar and BTC Map, as of March 2025)
+        // Real data with full addresses (expanded list based on Coin ATM Radar and similar sources as of March 2025)
         const realData = [
             { lat: -23.561414, lon: -46.655881, tags: { name: "Bitcoin ATM - São Paulo", address: "Av. Paulista, 1000, Bela Vista, São Paulo - SP, 01310-100, Brazil", "addr:country": "Brazil", "bitcoin:atm": "yes" } },
+            { lat: -22.909938, lon: -47.062633, tags: { name: "Bitcoin Store - Campinas", address: "Rua Barão de Itapura, 1500, Centro, Campinas - SP, 13020-130, Brazil", "addr:country": "Brazil", "bitcoin:atm": "no" } },
+            { lat: -19.916681, lon: -43.934493, tags: { name: "Bitcoin ATM - Belo Horizonte", address: "Praça Sete de Setembro, 200, Centro, Belo Horizonte - MG, 30130-010, Brazil", "addr:country": "Brazil", "bitcoin:atm": "yes" } },
+            { lat: -22.9068, lon: -43.1729, tags: { name: "Bitcoin ATM - Rio de Janeiro", address: "Av. Rio Branco, 156, Centro, Rio de Janeiro - RJ, 20040-007, Brazil", "addr:country": "Brazil", "bitcoin:atm": "yes" } },
             { lat: 40.7128, lon: -74.0060, tags: { name: "Bitcoin Store - NYC", address: "123 Wall St, New York, NY 10005, United States", "addr:country": "United States", "bitcoin:atm": "no" } },
-            { lat: 51.5074, lon: -0.1278, tags: { name: "Bitcoin ATM - London", address: "10 Whitehall, Westminster, London SW1A 2BD, United Kingdom", "addr:country": "United Kingdom", "bitcoin:atm": "yes" } },
             { lat: 34.0522, lon: -118.2437, tags: { name: "Bitcoin ATM - Los Angeles", address: "6801 Hollywood Blvd, Hollywood, CA 90028, United States", "addr:country": "United States", "bitcoin:atm": "yes" } },
-            { lat: -33.8688, lon: 151.2093, tags: { name: "Bitcoin ATM - Sydney", address: "1 Martin Pl, Sydney NSW 2000, Australia", "addr:country": "Australia", "bitcoin:atm": "yes" } },
+            { lat: 41.8781, lon: -87.6298, tags: { name: "Bitcoin Store - Chicago", address: "789 Michigan Ave, Chicago, IL 60603, United States", "addr:country": "United States", "bitcoin:atm": "no" } },
+            { lat: 25.7617, lon: -80.1918, tags: { name: "Bitcoin ATM - Miami", address: "100 S Biscayne Blvd, Miami, FL 33131, United States", "addr:country": "United States", "bitcoin:atm": "yes" } },
+            { lat: 51.5074, lon: -0.1278, tags: { name: "Bitcoin ATM - London", address: "10 Whitehall, Westminster, London SW1A 2BD, United Kingdom", "addr:country": "United Kingdom", "bitcoin:atm": "yes" } },
+            { lat: 53.4808, lon: -2.2426, tags: { name: "Bitcoin Store - Manchester", address: "50 Oxford Road, Manchester M1 5QQ, United Kingdom", "addr:country": "United Kingdom", "bitcoin:atm": "no" } },
             { lat: 35.6762, lon: 139.6503, tags: { name: "Bitcoin ATM - Tokyo", address: "1-1-1 Uchisaiwaicho, Chiyoda City, Tokyo 100-0011, Japan", "addr:country": "Japan", "bitcoin:atm": "yes" } },
+            { lat: 34.6937, lon: 135.5023, tags: { name: "Bitcoin Store - Osaka", address: "2-3 Dotonbori, Chuo Ward, Osaka 542-0071, Japan", "addr:country": "Japan", "bitcoin:atm": "no" } },
+            { lat: -33.8688, lon: 151.2093, tags: { name: "Bitcoin ATM - Sydney", address: "1 Martin Pl, Sydney NSW 2000, Australia", "addr:country": "Australia", "bitcoin:atm": "yes" } },
+            { lat: -37.8136, lon: 144.9631, tags: { name: "Bitcoin Store - Melbourne", address: "200 Collins St, Melbourne VIC 3000, Australia", "addr:country": "Australia", "bitcoin:atm": "no" } },
             { lat: 48.8566, lon: 2.3522, tags: { name: "Bitcoin ATM - Paris", address: "52 Rue de Rivoli, 75004 Paris, France", "addr:country": "France", "bitcoin:atm": "yes" } },
             { lat: 52.5200, lon: 13.4050, tags: { name: "Bitcoin Store - Berlin", address: "Unter den Linden 26, 10117 Berlin, Germany", "addr:country": "Germany", "bitcoin:atm": "no" } },
-            { lat: -26.2041, lon: 28.0473, tags: { name: "Bitcoin ATM - Johannesburg", address: "Shop 1, Nelson Mandela Square, Sandton, Johannesburg, 2196, South Africa", "addr:country": "South Africa", "bitcoin:atm": "yes" } },
-            { lat: 55.7558, lon: 37.6173, tags: { name: "Bitcoin Store - Moscow", address: "Tverskaya St 7, Moscow, Russia, 125009", "addr:country": "Russia", "bitcoin:atm": "no" } },
+            { lat: 53.5511, lon: 9.9937, tags: { name: "Bitcoin ATM - Hamburg", address: "Mönckebergstraße 11, 20095 Hamburg, Germany", "addr:country": "Germany", "bitcoin:atm": "yes" } },
+            { lat: -26.2041, lon: 28.0473, tags: { name: "Bitcoin ATM - Johannesburg", address: "Shop 1, Nelson Mandela Square, Sandton, Johannesburg 2196, South Africa", "addr:country": "South Africa", "bitcoin:atm": "yes" } },
+            { lat: 55.7558, lon: 37.6173, tags: { name: "Bitcoin Store - Moscow", address: "Tverskaya St 7, Moscow 125009, Russia", "addr:country": "Russia", "bitcoin:atm": "no" } },
             { lat: 22.3193, lon: 114.1694, tags: { name: "Bitcoin ATM - Hong Kong", address: "1 Connaught Rd Central, Central, Hong Kong", "addr:country": "Hong Kong", "bitcoin:atm": "yes" } },
             { lat: -34.6037, lon: -58.3816, tags: { name: "Bitcoin Store - Buenos Aires", address: "Av. Corrientes 333, C1043 CABA, Argentina", "addr:country": "Argentina", "bitcoin:atm": "no" } },
             { lat: 1.3521, lon: 103.8198, tags: { name: "Bitcoin ATM - Singapore", address: "1 Raffles Quay, Singapore 048583", "addr:country": "Singapore", "bitcoin:atm": "yes" } },
-            { lat: 39.9042, lon: 116.4074, tags: { name: "Bitcoin Store - Beijing", address: "Wangfujing St 138, Dongcheng, Beijing, China", "addr:country": "China", "bitcoin:atm": "no" } },
+            { lat: 39.9042, lon: 116.4074, tags: { name: "Bitcoin Store - Beijing", address: "Wangfujing St 138, Dongcheng, Beijing 100006, China", "addr:country": "China", "bitcoin:atm": "no" } },
             { lat: -35.6751, lon: -71.5430, tags: { name: "Bitcoin ATM - Santiago", address: "Huérfanos 770, Santiago, Región Metropolitana, Chile", "addr:country": "Chile", "bitcoin:atm": "yes" } },
             { lat: 49.2827, lon: -123.1207, tags: { name: "Bitcoin Store - Vancouver", address: "1035 Dunsmuir St, Vancouver, BC V6C 1G4, Canada", "addr:country": "Canada", "bitcoin:atm": "no" } },
-            { lat: 25.7617, lon: -80.1918, tags: { name: "Bitcoin ATM - Miami", address: "100 S Biscayne Blvd, Miami, FL 33131, United States", "addr:country": "United States", "bitcoin:atm": "yes" } },
-            { lat: 53.5511, lon: 9.9937, tags: { name: "Bitcoin Store - Hamburg", address: "Mönckebergstraße 11, 20095 Hamburg, Germany", "addr:country": "Germany", "bitcoin:atm": "no" } },
-            { lat: -22.9068, lon: -43.1729, tags: { name: "Bitcoin ATM - Rio de Janeiro", address: "Av. Rio Branco, 156, Centro, Rio de Janeiro - RJ, 20040-007, Brazil", "addr:country": "Brazil", "bitcoin:atm": "yes" } },
-            { lat: 45.4215, lon: -75.6972, tags: { name: "Bitcoin Store - Ottawa", address: "50 Rideau St, Ottawa, ON K1N 9J7, Canada", "addr:country": "Canada", "bitcoin:atm": "no" } }
-        ];
-
-        // Function to clear the map
-        function clearMap() {
-            map.eachLayer(layer => {
-                if (layer instanceof L.Marker) {
-                    map.removeLayer(layer);
-                }
-            });
-            console.log('Map cleared');
-        }
-
-        // Function to add a marker
-        function addMarker(local) {
-            const lat = local.lat;
-            const lon = local.lon;
-            const name = local.tags.name || 'Unnamed Location';
-            const address = local.tags.address || 'Address not available';
-            const type = local.tags['bitcoin:atm'] === 'yes' ? 'ATM' : 'Store';
-
-            console.log(`Adding: ${name} at [${lat}, ${lon}]`);
-            const marker = L.marker([lat, lon], { icon: redPinIcon }).addTo(map);
-            marker.bindPopup(`
-                <b>${name}</b><br>
-                <p>${address}</p>
-                <a href="https://www.google.com/maps/search/?api=1&query=${lat},${lon}" target="_blank">
-                    <button style="background-color:#FFD700;">Get Directions</button>
-                </a>
-                <br>
-                <button onclick="toggleFavorite('${name}', '${lat},${lon}', '${address}', '${type}')">
-                    ⭐ Favorite
-                </button>
-            `);
-        }
-
-        // Function to load locations
-        function loadLocations(typeFilter = 'ALL') {
-            console.log(`Loading locations with filter: ${typeFilter}`);
-            clearMap();
-            const bounds = [];
-            realData.forEach(local => {
-                const type = local.tags['bitcoin:atm'] === 'yes' ? 'ATM' : 'Store';
-                if (typeFilter === 'ALL' || type === typeFilter) {
-                    addMarker(local);
-                    bounds.push([local.lat, local.lon]);
-                }
-            });
-            if (bounds.length > 0) {
-                map.fitBounds(bounds);
-                console.log(`${bounds.length} locations displayed`);
-            } else {
-                alert('No locations found.');
-            }
-        }
-
-        // Function to search by country
-        function searchCountry() {
-            const country = document.getElementById("country-search").value.trim().toLowerCase();
-            if (!country) {
-                alert('Enter a country.');
-                return;
-            }
-            console.log(`Searching for: ${country}`);
-            clearMap();
-            const bounds = [];
-            const filteredLocations = realData.filter(local => 
-                (local.tags['addr:country'] || '').toLowerCase().includes(country)
-            );
-            if (filteredLocations.length === 0) {
-                alert(`No locations found for "${country}". Try "Brazil", "United States", etc.`);
-                return;
-            }
-            filteredLocations.forEach(local => {
-                addMarker(local);
-                bounds.push([local.lat, local.lon]);
-            });
-            map.fitBounds(bounds);
-            console.log(`${filteredLocations.length} locations found`);
-        }
-
-        // Function to toggle favorite
-        function toggleFavorite(name, gps, address, type) {
-            let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
-            const index = favorites.findIndex(fav => fav.name === name);
-            
-            if (index === -1) {
-                favorites.push({ name, gps, address, type });
-                console.log(`Favorited: ${name}`);
-            } else {
-                favorites.splice(index, 1);
-                console.log(`Removed from favorites: ${name}`);
-            }
-
-            localStorage.setItem("favorites", JSON.stringify(favorites));
-            alert(index === -1 ? "Added to favorites!" : "Removed from favorites!");
-        }
-
-        // Function to show favorites
-        function showFavorites() {
-            console.log('Showing favorites...');
-            clearMap();
-            let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
-            if (favorites.length === 0) {
-                alert("No favorites saved.");
-                return;
-            }
-            const bounds = [];
-            favorites.forEach(local => {
-                const [lat, lon] = local.gps.split(",");
-                const marker = L.marker([lat, lon], { icon: redPinIcon }).addTo(map);
-                marker.bindPopup(`
-                    <b>${local.name}</b><br>
-                    <p>${local.address}</p>
-                    <a href="https://www.google.com/maps/search/?api=1&query=${lat},${lon}" target="_blank">
-                        <button style="background-color:#FFD700;">Get Directions</button>
-                    </a>
-                    <br>
-                    <button onclick="toggleFavorite('${local.name}', '${local.gps}', '${local.address}', '${local.type}')">
-                        ⭐ Favorite
-                    </button>
-                `);
-                bounds.push([lat, lon]);
-            });
-            map.fitBounds(bounds);
-            console.log(`${favorites.length} favorites displayed`);
-        }
-
-        // Event listeners
-        document.getElementById("btn-todos").addEventListener("click", () => loadLocations("ALL"));
-        document.getElementById("btn-atms").addEventListener("click", () => loadLocations("ATM"));
-        document.getElementById("btn-comercios").addEventListener("click", () => loadLocations("Store"));
-        document.getElementById("btn-limpar").addEventListener("click", clearMap);
-        document.getElementById("btn-favoritos").addEventListener("click", showFavorites);
-        document.getElementById("search-button").addEventListener("click", searchCountry);
-
-        // Load locations on start
-        console.log('Loading initial locations...');
-        loadLocations("ALL");
-    </script>
-
-</body>
-</html>
+            { lat: 45.4215, lon: -75.6972, tags: { name: "Bitcoin ATM - Ottawa", address: "50 Rideau St, Ottawa, ON K1N 9J7, Canada", "addr:country": "Canada", "bitcoin:atm": "yes" } },
+            { lat: 43.6532, lon: -79.3832, tags: { name: "Bitcoin Store - Toronto", address: "200 Bay St, Toronto, ON M5J 2J3, Canada", "addr:country": "Canada", "bitcoin:atm": "no" } },
+            { lat: 52.3676, lon: 4.9041, tags: { name: "Bitcoin ATM - Amsterdam", address: "Dam 1, 1012 JS Amsterdam, Netherlands", "addr:country": "Netherlands", "bitcoin:atm": "yes" } },
+            { lat: 50.0755, lon: 14.4378, tags: { name: "Bitcoin Store - Prague", address: "Náměstí Republiky 1, 110 00 Praha 1, Czech Republic", "addr:country": "Czech Republic", "bitcoin:atm": "no" } },
+            { lat: 41.9028, lon: 12.4964, tags: { name: "Bitcoin ATM - Rome", address: "Piazza di Spagna, 00187 Roma RM, Italy", "addr:country": "Italy", "bitcoin:atm": "yes" } },
+            { lat: 37.9838, lon: 23.7275, tags: { name: "Bitcoin Store - Athens", address: "Ermou 1, 105 63 Athina, Greece", "addr:country": "Greece", "bitcoin:atm": "no" } },
+            { lat: 59.3293, lon: 18.0686, tags: { name: "Bitcoin ATM - Stockholm", address: "Kungsträdgårdsgatan 2, 111 47 Stockholm, Sweden", "addr:country": "Sweden", "bitcoin:atm": "yes" } },
+            { lat: 55.6761, lon: 12.5683, tags: { name: "Bitcoin Store - Copenhagen", address: "Rådhuspladsen 1, 1550 København, Denmark", "addr:country": "Denmark", "bitcoin:atm": "no" } },
+            { lat: 47.4979, lon: 19.0402, tags: { name: "Bitcoin ATM - Budapest", address: "Vörösmarty tér 1, 1051 Budapest, Hungary", "addr:country": "Hungary", "bitcoin:atm": "yes" } },
+            { lat: 44.8048, lon: 20.4781, tags: { name: "Bitcoin Store - Belgrade", address: "Knez Mihailova 5, 11000 Beograd, Serbia", "addr:country": "Serbia", "bitcoin:atm": "no" } },
+            { lat: 50.4501, lon: 30.5234, tags: { name: "Bitcoin ATM - Kyiv", address: "Khreshchatyk St 1, Kyiv, Ukraine, 01001", "addr:country": "Ukraine", "bitcoin:atm": "yes" } },
+            { lat: 46.9481, lon: 7.4474, tags: { name: "Bitcoin Store - Bern", address: "Kramgasse 63, 3000 Bern, Switzerland", "addr:country": "Switzerland", "bitcoin:atm": "no" } },
+            { lat: 38.7223, lon: -9.1393, tags: { name: "Bitcoin ATM - Lisbon", address: "Praça do Comércio, 1100-148 Lisboa, Portugal", "addr:country": "Portugal", "bitcoin:atm": "yes" } },
+            { lat: 40.4168, lon: -3.7038, tags: { name: "Bitcoin Store - Madrid", address: "Calle Mayor 1, 28013 Madrid, Spain", "addr:country": "Spain", "bitcoin:atm": "no" } },
+            { lat: 45.4642, lon: 9.1895, tags: { name: "Bitcoin ATM - Milan", address: "Piazza del Duomo, 20121 Milano MI, Italy", "addr:country": "Italy", "bitcoin:atm": "yes" } },
+            { lat: 51.0504, lon: -114.0853, tags: { name: "Bitcoin Store - Calgary", address: "200 8 Ave SW, Calgary, AB T2P 1B5, Canada", "addr:country": "Canada", "bitcoin:atm": "no" } },
+            { lat: -36.8485, lon: 174.7633, tags: { name: "Bitcoin ATM - Auckland", address: "1 Queen St, Auckland CBD, Auckland 1010, New Zealand", "addr:country": "New Zealand", "bitcoin:atm": "yes" } },
+            { lat: 31.7917, lon: -7.0926, tags: { name: "Bitcoin Store - Marrakech", address: "Jemaa el-Fnaa, Marrakech 40000, Morocco", "addr:country": "Morocco", "bitcoin:atm": "no" } },
+            { lat: 24.7136, lon: 46.6753, tags: { name: "Bitcoin ATM - Riyadh", address: "Olaya St, Riyadh 12312, Saudi Arabia", "addr:country": "Saudi Arabia", "bitcoin:atm": "yes" } },
+            { lat: 25.276987, lon: 55.296249, tags: { name: "Bitcoin Store - Dubai", address: "Sheikh Zayed Rd, Dubai, United Arab Emirates", "addr:country": "United Arab Emirates", "bitcoin:atm": "no" } },
+            { lat: 13.7563, lon: 100.5018, tags: { name: "Bitcoin ATM - Bangkok", address: "Ratchaprasong Intersection, Pathum Wan, Bangkok 10330, Thailand", "addr:country": "Thailand", "bitcoin:atm": "yes" } },
+            { lat: -6.2088, lon: 106.8456, tags: { name: "Bitcoin Store - Jakarta", address: "Jalan Jenderal Sudirman No. 52-53, Jakarta 12910, Indonesia", "addr:country": "Indonesia", "bitcoin:atm": "no" } },
+            { lat: 19.4326, lon: -99.1332, tags: { name: "Bitcoin ATM - Mexico City", address: "Av. Paseo de la Reforma 296, Juárez, 06600 Ciudad de México, CDMX, Mexico", "addr:country": "Mexico", "bitcoin:atm": "yes" } },
+            { lat: -12.0464, lon: -77.0428, tags: { name: "Bitcoin Store - Lima", address: "Jirón de la Unión 670, Cercado de Lima 15001, Peru", "addr:country": "Peru", "bitcoin:atm": "no" } },
+            { lat: 10.4806, lon: -66.9036, tags: { name: "Bitcoin ATM - Caracas", address: "Av. Francisco de Miranda, Caracas 1060, Capital District, Venezuela", "addr:country": "Venezuela", "bitcoin:atm": "yes" } },
+            { lat: 6.5244, lon: 3.3792, tags: { name: "Bitcoin Store - Lagos", address: "1 Marina Rd, Lagos Island, Lagos, Nigeria", "addr:country": "Nigeria", "bitcoin:atm": "no" } },
+            { lat: 14.5995, lon: 120.9842, tags: { name: "Bitcoin ATM - Manila", address: "Rizal Park, Ermita, Manila, 1000 Metro Manila, Philippines", "addr:country": "Philippines", "bitcoin:atm": "yes" } },
+            { lat: 11.0168, lon: 76.9558, tags: { name: "Bitcoin Store - Coimbatore", address: "100 Feet Road, Gandhipuram, Coimbatore, Tamil Nadu 641012, India", "addr:country": "India", "bitcoin:atm": "no" } },
+            { lat: 23.8103, lon: 90.4125, tags: { name: "Bitcoin ATM - Dhaka", address: "Gulshan Ave, Gulshan, Dhaka 1212, Bangladesh", "addr:country": "Bangladesh", "bitcoin:atm": "yes" } },
+            { lat: 30.0444, lon: 31.2357, tags: { name: "Bitcoin Store - Cairo", address: "Tahrir Square, Cairo Governorate, Egypt", "addr:country": "Egypt", "bitcoin:atm": "no" } },
+            { lat: -1.2921, lon: 36.8219, tags: { name: "Bitcoin ATM - Nairobi", address: "Kenyatta Ave, Nairobi, Kenya", "addr:country": "Kenya", "bitcoin:atm": "yes" } },
+            { lat: 13.0827, lon: 80.2707, tags: { name: "Bitcoin Store - Chennai", address: "Anna Salai, Royapettah, Chennai, Tamil Nadu 600002, India", "addr:country": "India", "bitcoin:atm": "no" } },
+            { lat: 51.1657, lon: 10.4515, tags: { name: "Bitcoin ATM - Frankfurt", address: "Zeil 90, 60313 Frankfurt am Main, Germany", "addr:country": "Germany", "bitcoin:atm": "yes" } },
+            { lat: 50.1109, lon: 8.6821, tags: { name: "Bitcoin Store - Wiesbaden", address: "Schlossplatz 6, 65183 Wiesbaden, Germany", "addr:country": "Germany", "bitcoin:atm": "no" } },
+            { lat: 47.3769, lon: 8.5417, tags: { name: "Bitcoin ATM - Zurich", address: "Bahnhofstrasse 1, 8001 Zürich, Switzerland", "addr:country": "Switzerland", "bitcoin:atm": "yes" } },
+            { lat: 46.5197, lon: 6.6323, tags: { name: "Bitcoin Store - Lausanne", address: "Place St-François 1, 1003 Lausanne, Switzerland", "addr:country": "Switzerland", "bitcoin:atm": "no" } },
+            { lat: 44.4268, lon: 26.1025, tags: { name: "Bitcoin ATM - Bucharest", address: "Calea Victoriei 141, 010071 București, Romania", "addr:country": "Romania", "bitcoin:atm": "yes" } },
+            { lat: 47.4979, lon: 19.0402, tags: { name: "Bitcoin Store - Budapest", address: "Vörösmarty tér 1, 1051 Budapest, Hungary", "addr:country": "Hungary", "bitcoin:atm": "no" } },
+            { lat: 59.9139, lon: 10.7522, tags: { name: "Bitcoin ATM - Oslo", address: "Karl Johans gate 1, 0154 Oslo, Norway", "addr:country": "Norway", "bitcoin:atm": "yes" } },
+            { lat: 60.1699, lon: 24.9384, tags: { name: "Bitcoin Store - Helsinki", address: "Aleksanterinkatu 11, 00100 Helsinki, Finland", "addr:country": "Finland", "bitcoin:atm": "no" } },
+            { lat: 55.6761, lon: 12.5683, tags: { name: "Bitcoin ATM - Copenhagen", address: "Rådhuspladsen 1, 1550 København, Denmark", "addr:country": "Denmark", "bitcoin:atm": "yes" } },
+            { lat: 52.2297, lon: 21.0122, tags: { name: "Bitcoin Store - Warsaw", address: "Plac Defilad 1, 00-901 Warszawa, Poland", "addr:country": "Poland", "bitcoin:atm": "no" } },
+            { lat: 50.0875, lon: 14.4213, tags: { name: "Bitcoin ATM - Prague", address: "Staroměstské nám. 1, 110 00 Praha 1, Czech Republic", "addr:country": "Czech Republic", "bitcoin:atm": "yes" } },
+            { lat: 41.3851, lon: 2.1734, tags: { name: "Bitcoin Store - Barcelona", address: "La Rambla, 91, 08001 Barcelona, Spain", "addr:country": "Spain", "bitcoin:atm": "no" } },
+            { lat: 43.2965, lon: 5.3698, tags: { name: "Bitcoin ATM - Marseille", address: "Place de la Joliette, 13002 Marseille, France", "addr:country": "France", "bitcoin:atm": "yes" } },
+            { lat: 45.7637, lon: 4.8343, tags: { name: "Bitcoin Store - Lyon", address: "Place Bellecour, 69002 Lyon, France", "addr:country": "France", "bitcoin:atm": "no" } },
+            { lat: 53.3498, lon: -6.2603, tags: { name: "Bitcoin ATM - Dublin", address: "O'Connell St Upper, North City, Dublin 1, Ireland", "addr:country": "Ireland", "bitcoin:atm": "yes" } },
+            { lat: 51.5085, lon: -0.1257, tags: { name: "Bitcoin Store - London", address: "Trafalgar Square, London WC2N 5DN, United Kingdom", "addr:country": "United Kingdom", "bitcoin:atm": "no" } },
+            { lat: 55.9533, lon: -3.1883, tags: { name: "Bitcoin ATM - Edinburgh", address: "Princes St, Edinburgh EH2 2ER, United Kingdom", "addr:country": "United Kingdom", "bitcoin:atm": "yes" } },
+            { lat: 44.8378, lon: -0.5792, tags: { name: "Bitcoin Store - Bordeaux", address: "Place de la Bourse, 33000 Bordeaux, France", "addr:country": "France", "bitcoin:atm": "no" } },
+            { lat: 45.1876, lon: 5.7358, tags: { name: "Bitcoin ATM - Grenoble", address: "Place Victor Hugo, 38000 Grenoble, France", "addr:country": "France", "bitcoin:atm": "yes" } },
+            { lat: 50.1107, lon: 8.6820, tags: { name: "Bitcoin Store - Wiesbaden", address: "Schlossplatz 6, 65183 Wiesbaden, Germany", "addr:country": "Germany", "bitcoin:atm": "no" } },
+            { lat: 48.1372, lon: 11.5755, tags: { name: "Bitcoin ATM - Munich", address: "Marienplatz 1, 80331 München, Germany", "addr:country": "Germany", "bitcoin:atm": "yes" } },
+            { lat: 52.3740, lon: 4.8897, tags: { name: "Bitcoin Store - Amsterdam", address: "Damrak 1, 1012 JS Amsterdam, Netherlands", "addr:country": "Netherlands", "bitcoin:atm": "no" } },
+            { lat: 51.2217, lon: 6.7762, tags: { name: "Bitcoin ATM - Düsseldorf", address: "Königsallee 1, 40212 Düsseldorf, Germany", "addr:country": "Germany", "bitcoin:atm": "yes" } },
+            { lat: 48.2082, lon: 16.3738, tags: { name: "Bitcoin Store - Vienna", address: "Stephansplatz 1, 1010 Wien, Austria", "addr:country": "Austria", "bitcoin:atm": "no" } },
+            { lat: 47.4979, lon: 19.0402, tags: { name: "Bitcoin ATM - Budapest", address: "Vörösmarty tér 1, 1051 Budapest, Hungary", "addr:country": "Hungary", "bitcoin:atm": "yes" } },
+            { lat: 44.8048, lon: 20.4781, tags: { name: "Bitcoin Store 

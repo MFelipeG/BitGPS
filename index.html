@@ -221,4 +221,38 @@
             { lat: 50.1107, lon: 8.6820, tags: { name: "Bitcoin Store - Wiesbaden", address: "Schlossplatz 6, 65183 Wiesbaden, Germany", "addr:country": "Germany", "bitcoin:atm": "no" } },
             { lat: 48.1372, lon: 11.5755, tags: { name: "Bitcoin ATM - Munich", address: "Marienplatz 1, 80331 München, Germany", "addr:country": "Germany", "bitcoin:atm": "yes" } },
             { lat: 52.3740, lon: 4.8897, tags: { name: "Bitcoin Store - Amsterdam", address: "Damrak 1, 1012 JS Amsterdam, Netherlands", "addr:country": "Netherlands", "bitcoin:atm": "no" } },
-            { lat: 51.2217, lon: 6.7762, tags: { name: "Bitcoin ATM 
+                                <p>${local.address}</p>
+                    <a href="https://www.google.com/maps/search/?api=1&query=${lat},${lon}" target="_blank">
+                        <button style="background-color:#FFD700;">Get Directions</button>
+                    </a>
+                    <br>
+                    <button onclick="toggleFavorite('${local.name}', '${local.gps}', '${local.address}', '${local.type}')" style="background-color: white; color: black; border: 1px solid #FFD700;">
+                        ⚪ Favorite
+                    </button>
+                `);
+                bounds.push([lat, lon]);
+            });
+            try {
+                map.fitBounds(bounds);
+                console.log(`${favorites.length} favorites displayed`);
+            } catch (error) {
+                console.error('Error setting map bounds for favorites:', error);
+                alert('Error displaying favorites. Check console for details.');
+            }
+        }
+
+        // Event listeners
+        document.getElementById("btn-todos").addEventListener("click", () => loadLocations("ALL"));
+        document.getElementById("btn-atms").addEventListener("click", () => loadLocations("ATM"));
+        document.getElementById("btn-comercios").addEventListener("click", () => loadLocations("Store"));
+        document.getElementById("btn-limpar").addEventListener("click", clearMap);
+        document.getElementById("btn-favoritos").addEventListener("click", showFavorites);
+        document.getElementById("search-button").addEventListener("click", searchCountry);
+
+        // Load locations on start
+        console.log('Loading initial locations...');
+        loadLocations("ALL");
+    </script>
+
+</body>
+</html>

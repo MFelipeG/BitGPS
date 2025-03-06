@@ -14,6 +14,10 @@
             text-align: center;
             margin: 0;
             padding: 20px;
+            min-height: 100vh; /* Garante que o body ocupe a altura total */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         h2 {
@@ -50,13 +54,26 @@
         #map-container {
             height: 500px;
             width: 100%;
+            max-width: 1200px; /* Limita a largura máxima no desktop */
             border-radius: 10px;
             overflow: hidden;
             margin-top: 10px;
+            flex-grow: 1; /* Faz o mapa crescer para preencher o espaço disponível */
         }
 
         .leaflet-popup-content {
             text-align: center;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            input, button {
+                width: 100%; /* Botões e input ocupam toda a largura no mobile */
+                box-sizing: border-box;
+            }
+            #map-container {
+                height: 400px; /* Altura menor no mobile */
+            }
         }
     </style>
 </head>
@@ -96,12 +113,23 @@
             popupAnchor: [0, -30]
         });
 
-        // Expanded dummy data
+        // Expanded dummy data with more locations
         const dummyData = [
             { lat: -23.561414, lon: -46.655881, tags: { name: "São Paulo ATM", "addr:country": "Brazil", "bitcoin:atm": "yes" } },
             { lat: -22.909938, lon: -47.062633, tags: { name: "Campinas Store", "addr:country": "Brazil", "bitcoin:atm": "no" } },
+            { lat: -19.916681, lon: -43.934493, tags: { name: "Belo Horizonte ATM", "addr:country": "Brazil", "bitcoin:atm": "yes" } },
             { lat: 40.7128, lon: -74.0060, tags: { name: "NYC Store", "addr:country": "United States", "bitcoin:atm": "no" } },
-            { lat: 51.5074, lon: -0.1278, tags: { name: "London ATM", "addr:country": "United Kingdom", "bitcoin:atm": "yes" } }
+            { lat: 34.0522, lon: -118.2437, tags: { name: "Los Angeles ATM", "addr:country": "United States", "bitcoin:atm": "yes" } },
+            { lat: 41.8781, lon: -87.6298, tags: { name: "Chicago Store", "addr:country": "United States", "bitcoin:atm": "no" } },
+            { lat: 51.5074, lon: -0.1278, tags: { name: "London ATM", "addr:country": "United Kingdom", "bitcoin:atm": "yes" } },
+            { lat: 53.4808, lon: -2.2426, tags: { name: "Manchester Store", "addr:country": "United Kingdom", "bitcoin:atm": "no" } },
+            { lat: 35.6762, lon: 139.6503, tags: { name: "Tokyo ATM", "addr:country": "Japan", "bitcoin:atm": "yes" } },
+            { lat: 34.6937, lon: 135.5023, tags: { name: "Osaka Store", "addr:country": "Japan", "bitcoin:atm": "no" } },
+            { lat: -33.8688, lon: 151.2093, tags: { name: "Sydney ATM", "addr:country": "Australia", "bitcoin:atm": "yes" } },
+            { lat: -37.8136, lon: 144.9631, tags: { name: "Melbourne Store", "addr:country": "Australia", "bitcoin:atm": "no" } },
+            { lat: 48.8566, lon: 2.3522, tags: { name: "Paris ATM", "addr:country": "France", "bitcoin:atm": "yes" } },
+            { lat: 52.5200, lon: 13.4050, tags: { name: "Berlin Store", "addr:country": "Germany", "bitcoin:atm": "no" } },
+            { lat: -26.2041, lon: 28.0473, tags: { name: "Johannesburg ATM", "addr:country": "South Africa", "bitcoin:atm": "yes" } }
         ];
 
         // Function to clear the map

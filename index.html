@@ -61,7 +61,7 @@
 
     <h2>🟡 BitGPS - Encontre ATMs e Lojas de Bitcoin 🟡</h2>
     
-    <input type="text" id="country-search" placeholder="Digite um país">
+    <input type="text" id="country-search" placeholder="Digite um país (ex.: Brazil, United States)">
     <button id="search-button">Buscar</button>
     <button id="btn-todos">TODOS</button>
     <button id="btn-atms">ATMs</button>
@@ -100,11 +100,11 @@
 
         // Função para adicionar marcador
         function adicionarMarcador(local) {
-            const lat = local.latitude;
-            const lon = local.longitude;
-            const tipo = local.tags['payment:bitcoin'] === 'yes' ? 'Comércio' : 'ATM'; // Aproximação baseada em tags
+            const lat = local.lat; // A API usa 'lat' e 'lon'
+            const lon = local.lon;
             const nome = local.tags.name || 'Local sem nome';
-            const endereco = local.tags.address || 'Endereço não disponível';
+            const endereco = local.tags['addr:full'] || local.tags.address || 'Endereço não disponível';
+            const tipo = local.tags['bitcoin:atm'] === 'yes' ? 'ATM' : 'Comércio'; // Melhor diferenciação
 
             const marcador = L.marker([lat, lon], { icon: redPinIcon }).addTo(map);
             marcador.bindPopup(`
@@ -120,48 +120,64 @@
             `);
         }
 
-        // Função para carregar todos os locais da API
+        // Função para carregar locais da API
         function carregarLocaisGlobais(tipoFiltro = 'TODOS') {
             fetch('https://api.btcmap.org/v2/places')
                 .then(response => response.json())
                 .then(data => {
+                    console.log('Dados carregados da API:', data); // Log para depuração
                     limparMapa();
                     const bounds = [];
                     data.forEach(local => {
-                        const tipo = local.tags['payment:bitcoin'] === 'yes' ? 'Comércio' : 'ATM';
+                        const tipo = local.tags['bitcoin:atm'] === 'yes' ? 'ATM' : 'Comércio';
                         if (tipoFiltro === 'TODOS' || tipo === tipoFiltro) {
                             adicionarMarcador(local);
-                            bounds.push([local.latitude, local.longitude]);
+                            bounds.push([local.lat, local.lon]);
                         }
                     });
-                    if (bounds.length > 0) map.fitBounds(bounds);
+                    if (bounds.length > 0) {
+                        map.fitBounds(bounds);
+                    } else {
+                        alert('Nenhum local encontrado para este filtro.');
+                    }
                 })
-                .catch(error => console.error('Erro ao carregar locais:', error));
+                .catch(error => {
+                    console.error('Erro ao carregar locais:', error);
+                    alert('Erro ao carregar os dados. Verifique sua conexão ou tente novamente.');
+                });
         }
 
         // Função para buscar por país
         function buscarPais() {
             const pais = document.getElementById("country-search").value.trim().toLowerCase();
+            if (!pais) {
+                alert('Digite um país para buscar.');
+                return;
+            }
             fetch('https://api.btcmap.org/v2/places')
                 .then(response => response.json())
                 .then(data => {
+                    console.log('Dados da API para busca:', data); // Log para depuração
                     limparMapa();
                     const bounds = [];
-                    const locaisFiltrados = data.filter(local => 
-                        (local.tags.country || '').toLowerCase().includes(pais) ||
-                        (local.tags['addr:country'] || '').toLowerCase().includes(pais)
-                    );
+                    const locaisFiltrados = data.filter(local => {
+                        const country = (local.tags['addr:country'] || local.tags.country || '').toLowerCase();
+                        return country.includes(pais);
+                    });
                     if (locaisFiltrados.length === 0) {
-                        alert("País não encontrado ou sem locais registrados.");
+                        alert(`Nenhum local encontrado para "${pais}". Tente outro nome (ex.: Brazil, United States).`);
                         return;
                     }
                     locaisFiltrados.forEach(local => {
                         adicionarMarcador(local);
-                        bounds.push([local.latitude, local.longitude]);
+                        bounds.push([local.lat, local.lon]);
                     });
                     map.fitBounds(bounds);
                 })
-                .catch(error => console.error('Erro ao buscar país:', error));
+                .catch(error => {
+                    console.error('Erro ao buscar país:', error);
+                    alert('Erro ao buscar. Verifique sua conexão ou tente novamente.');
+                });
         }
 
         // Função para favoritar/desfavoritar

@@ -107,14 +107,28 @@
     <script>
         console.log('Script started...');
 
-        // Initialize the map
-        const map = L.map('map-container').setView([0, 0], 2);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-        console.log('Map initialized.');
+        // Verify Leaflet loaded
+        if (typeof L === 'undefined') {
+            console.error('Leaflet not loaded!');
+            alert('Error: Leaflet not loaded. Check your internet connection.');
+            throw new Error('Leaflet not available');
+        }
+        console.log('Leaflet loaded successfully.');
 
-        // Custom icon
+        // Initialize the map
+        let map;
+        try {
+            map = L.map('map-container').setView([0, 0], 2);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+            console.log('Map initialized successfully.');
+        } catch (error) {
+            console.error('Error initializing map:', error);
+            alert('Error initializing map. Check console for details.');
+        }
+
+        // Custom icon for markers
         const redPinIcon = L.icon({
             iconUrl: 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="40" height="40">
@@ -186,7 +200,7 @@
             { lat: -1.2921, lon: 36.8219, tags: { name: "Bitcoin ATM - Nairobi", address: "Kenyatta Ave, Nairobi, Kenya", "addr:country": "Kenya", "bitcoin:atm": "yes" } },
             { lat: 13.0827, lon: 80.2707, tags: { name: "Bitcoin Store - Chennai", address: "Anna Salai, Royapettah, Chennai, Tamil Nadu 600002, India", "addr:country": "India", "bitcoin:atm": "no" } },
             { lat: 51.1657, lon: 10.4515, tags: { name: "Bitcoin ATM - Frankfurt", address: "Zeil 90, 60313 Frankfurt am Main, Germany", "addr:country": "Germany", "bitcoin:atm": "yes" } },
-            { lat: 50.1109, lon: 8.6821, tags: { name: "Bitcoin Store - Wiesbaden", address: "Schlossplatz 6, 65183 Wiesbaden, Germany", "addr:country": "Germany", "bitcoin:atm": "no" } },
+            { lat: 50.1107, lon: 8.6820, tags: { name: "Bitcoin Store - Wiesbaden", address: "Schlossplatz 6, 65183 Wiesbaden, Germany", "addr:country": "Germany", "bitcoin:atm": "no" } },
             { lat: 47.3769, lon: 8.5417, tags: { name: "Bitcoin ATM - Zurich", address: "Bahnhofstrasse 1, 8001 Zürich, Switzerland", "addr:country": "Switzerland", "bitcoin:atm": "yes" } },
             { lat: 46.5197, lon: 6.6323, tags: { name: "Bitcoin Store - Lausanne", address: "Place St-François 1, 1003 Lausanne, Switzerland", "addr:country": "Switzerland", "bitcoin:atm": "no" } },
             { lat: 44.4268, lon: 26.1025, tags: { name: "Bitcoin ATM - Bucharest", address: "Calea Victoriei 141, 010071 București, Romania", "addr:country": "Romania", "bitcoin:atm": "yes" } },
@@ -207,7 +221,4 @@
             { lat: 50.1107, lon: 8.6820, tags: { name: "Bitcoin Store - Wiesbaden", address: "Schlossplatz 6, 65183 Wiesbaden, Germany", "addr:country": "Germany", "bitcoin:atm": "no" } },
             { lat: 48.1372, lon: 11.5755, tags: { name: "Bitcoin ATM - Munich", address: "Marienplatz 1, 80331 München, Germany", "addr:country": "Germany", "bitcoin:atm": "yes" } },
             { lat: 52.3740, lon: 4.8897, tags: { name: "Bitcoin Store - Amsterdam", address: "Damrak 1, 1012 JS Amsterdam, Netherlands", "addr:country": "Netherlands", "bitcoin:atm": "no" } },
-            { lat: 51.2217, lon: 6.7762, tags: { name: "Bitcoin ATM - Düsseldorf", address: "Königsallee 1, 40212 Düsseldorf, Germany", "addr:country": "Germany", "bitcoin:atm": "yes" } },
-            { lat: 48.2082, lon: 16.3738, tags: { name: "Bitcoin Store - Vienna", address: "Stephansplatz 1, 1010 Wien, Austria", "addr:country": "Austria", "bitcoin:atm": "no" } },
-            { lat: 47.4979, lon: 19.0402, tags: { name: "Bitcoin ATM - Budapest", address: "Vörösmarty tér 1, 1051 Budapest, Hungary", "addr:country": "Hungary", "bitcoin:atm": "yes" } },
-            { lat: 44.8048, lon: 20.4781, tags: { name: "Bitcoin Store 
+            { lat: 51.2217, lon: 6.7762, tags: { name: "Bitcoin ATM 

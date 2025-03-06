@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BitGPS - ATMs e Lojas de Bitcoin</title>
+    <title>BitGPS - Bitcoin ATMs and Stores</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <style>
@@ -62,29 +62,29 @@
 </head>
 <body>
 
-    <h2>🟡 BitGPS - Encontre ATMs e Lojas de Bitcoin 🟡</h2>
+    <h2>🟡 BitGPS - Find Bitcoin ATMs and Stores 🟡</h2>
     
-    <input type="text" id="country-search" placeholder="Digite um país (ex.: Brazil, United States)">
-    <button id="search-button">Buscar</button>
-    <button id="btn-todos">TODOS</button>
+    <input type="text" id="country-search" placeholder="Enter a country (e.g., Brazil, United States)">
+    <button id="search-button">Search</button>
+    <button id="btn-todos">ALL</button>
     <button id="btn-atms">ATMs</button>
-    <button id="btn-comercios">Comércios</button>
-    <button id="btn-limpar">Limpar Mapa</button>
-    <button id="btn-favoritos">Ver Favoritos</button>
+    <button id="btn-comercios">Stores</button>
+    <button id="btn-limpar">Clear Map</button>
+    <button id="btn-favoritos">View Favorites</button>
 
     <div id="map-container"></div>
 
     <script>
-        console.log('Script iniciado...');
+        console.log('Script started...');
 
-        // Inicializa o mapa
+        // Initialize the map
         const map = L.map('map-container').setView([0, 0], 2);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
-        console.log('Mapa inicializado.');
+        console.log('Map initialized.');
 
-        // Ícone personalizado
+        // Custom icon
         const redPinIcon = L.icon({
             iconUrl: 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="40" height="40">
@@ -96,150 +96,150 @@
             popupAnchor: [0, -30]
         });
 
-        // Dados fictícios expandidos
-        const dadosFicticios = [
-            { lat: -23.561414, lon: -46.655881, tags: { name: "ATM São Paulo", "addr:country": "Brazil", "bitcoin:atm": "yes" } },
-            { lat: -22.909938, lon: -47.062633, tags: { name: "Loja Campinas", "addr:country": "Brazil", "bitcoin:atm": "no" } },
-            { lat: 40.7128, lon: -74.0060, tags: { name: "Loja NYC", "addr:country": "United States", "bitcoin:atm": "no" } },
-            { lat: 51.5074, lon: -0.1278, tags: { name: "ATM Londres", "addr:country": "United Kingdom", "bitcoin:atm": "yes" } }
+        // Expanded dummy data
+        const dummyData = [
+            { lat: -23.561414, lon: -46.655881, tags: { name: "São Paulo ATM", "addr:country": "Brazil", "bitcoin:atm": "yes" } },
+            { lat: -22.909938, lon: -47.062633, tags: { name: "Campinas Store", "addr:country": "Brazil", "bitcoin:atm": "no" } },
+            { lat: 40.7128, lon: -74.0060, tags: { name: "NYC Store", "addr:country": "United States", "bitcoin:atm": "no" } },
+            { lat: 51.5074, lon: -0.1278, tags: { name: "London ATM", "addr:country": "United Kingdom", "bitcoin:atm": "yes" } }
         ];
 
-        // Função para limpar o mapa
-        function limparMapa() {
+        // Function to clear the map
+        function clearMap() {
             map.eachLayer(layer => {
                 if (layer instanceof L.Marker) {
                     map.removeLayer(layer);
                 }
             });
-            console.log('Mapa limpo');
+            console.log('Map cleared');
         }
 
-        // Função para adicionar marcador
-        function adicionarMarcador(local) {
+        // Function to add a marker
+        function addMarker(local) {
             const lat = local.lat;
             const lon = local.lon;
-            const nome = local.tags.name || 'Local sem nome';
-            const endereco = local.tags['addr:country'] || 'Endereço não disponível';
-            const tipo = local.tags['bitcoin:atm'] === 'yes' ? 'ATM' : 'Comércio';
+            const name = local.tags.name || 'Unnamed Location';
+            const address = local.tags['addr:country'] || 'Address not available';
+            const type = local.tags['bitcoin:atm'] === 'yes' ? 'ATM' : 'Store';
 
-            console.log(`Adicionando: ${nome} em [${lat}, ${lon}]`);
-            const marcador = L.marker([lat, lon], { icon: redPinIcon }).addTo(map);
-            marcador.bindPopup(`
-                <b>${nome}</b><br>
-                <p>${endereco}</p>
+            console.log(`Adding: ${name} at [${lat}, ${lon}]`);
+            const marker = L.marker([lat, lon], { icon: redPinIcon }).addTo(map);
+            marker.bindPopup(`
+                <b>${name}</b><br>
+                <p>${address}</p>
                 <a href="https://www.google.com/maps/search/?api=1&query=${lat},${lon}" target="_blank">
-                    <button style="background-color:#FFD700;">Como Chegar</button>
+                    <button style="background-color:#FFD700;">Get Directions</button>
                 </a>
                 <br>
-                <button onclick="toggleFavorito('${nome}', '${lat},${lon}', '${endereco}', '${tipo}')">
-                    ⭐ Favoritar
+                <button onclick="toggleFavorite('${name}', '${lat},${lon}', '${address}', '${type}')">
+                    ⭐ Favorite
                 </button>
             `);
         }
 
-        // Função para carregar locais
-        function carregarLocaisGlobais(tipoFiltro = 'TODOS') {
-            console.log(`Carregando locais com filtro: ${tipoFiltro}`);
-            limparMapa();
+        // Function to load locations
+        function loadLocations(typeFilter = 'ALL') {
+            console.log(`Loading locations with filter: ${typeFilter}`);
+            clearMap();
             const bounds = [];
-            dadosFicticios.forEach(local => {
-                const tipo = local.tags['bitcoin:atm'] === 'yes' ? 'ATM' : 'Comércio';
-                if (tipoFiltro === 'TODOS' || tipo === tipoFiltro) {
-                    adicionarMarcador(local);
+            dummyData.forEach(local => {
+                const type = local.tags['bitcoin:atm'] === 'yes' ? 'ATM' : 'Store';
+                if (typeFilter === 'ALL' || type === typeFilter) {
+                    addMarker(local);
                     bounds.push([local.lat, local.lon]);
                 }
             });
             if (bounds.length > 0) {
                 map.fitBounds(bounds);
-                console.log(`${bounds.length} locais exibidos`);
+                console.log(`${bounds.length} locations displayed`);
             } else {
-                alert('Nenhum local encontrado.');
+                alert('No locations found.');
             }
         }
 
-        // Função para buscar por país
-        function buscarPais() {
-            const pais = document.getElementById("country-search").value.trim().toLowerCase();
-            if (!pais) {
-                alert('Digite um país.');
+        // Function to search by country
+        function searchCountry() {
+            const country = document.getElementById("country-search").value.trim().toLowerCase();
+            if (!country) {
+                alert('Enter a country.');
                 return;
             }
-            console.log(`Buscando por: ${pais}`);
-            limparMapa();
+            console.log(`Searching for: ${country}`);
+            clearMap();
             const bounds = [];
-            const locaisFiltrados = dadosFicticios.filter(local => 
-                (local.tags['addr:country'] || '').toLowerCase().includes(pais)
+            const filteredLocations = dummyData.filter(local => 
+                (local.tags['addr:country'] || '').toLowerCase().includes(country)
             );
-            if (locaisFiltrados.length === 0) {
-                alert(`Nenhum local encontrado para "${pais}". Tente "Brazil", "United States", etc.`);
+            if (filteredLocations.length === 0) {
+                alert(`No locations found for "${country}". Try "Brazil", "United States", etc.`);
                 return;
             }
-            locaisFiltrados.forEach(local => {
-                adicionarMarcador(local);
+            filteredLocations.forEach(local => {
+                addMarker(local);
                 bounds.push([local.lat, local.lon]);
             });
             map.fitBounds(bounds);
-            console.log(`${locaisFiltrados.length} locais encontrados`);
+            console.log(`${filteredLocations.length} locations found`);
         }
 
-        // Função para favoritar/desfavoritar
-        function toggleFavorito(nome, gps, endereco, tipo) {
-            let favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
-            const index = favoritos.findIndex(fav => fav.nome === nome);
+        // Function to toggle favorite
+        function toggleFavorite(name, gps, address, type) {
+            let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+            const index = favorites.findIndex(fav => fav.name === name);
             
             if (index === -1) {
-                favoritos.push({ nome, gps, endereco, tipo });
-                console.log(`Favoritado: ${nome}`);
+                favorites.push({ name, gps, address, type });
+                console.log(`Favorited: ${name}`);
             } else {
-                favoritos.splice(index, 1);
-                console.log(`Removido dos favoritos: ${nome}`);
+                favorites.splice(index, 1);
+                console.log(`Removed from favorites: ${name}`);
             }
 
-            localStorage.setItem("favoritos", JSON.stringify(favoritos));
-            alert(index === -1 ? "Adicionado aos favoritos!" : "Removido dos favoritos!");
+            localStorage.setItem("favorites", JSON.stringify(favorites));
+            alert(index === -1 ? "Added to favorites!" : "Removed from favorites!");
         }
 
-        // Função para mostrar favoritos
-        function mostrarFavoritos() {
-            console.log('Exibindo favoritos...');
-            limparMapa();
-            let favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
-            if (favoritos.length === 0) {
-                alert("Nenhum favorito salvo.");
+        // Function to show favorites
+        function showFavorites() {
+            console.log('Showing favorites...');
+            clearMap();
+            let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+            if (favorites.length === 0) {
+                alert("No favorites saved.");
                 return;
             }
             const bounds = [];
-            favoritos.forEach(local => {
+            favorites.forEach(local => {
                 const [lat, lon] = local.gps.split(",");
-                const marcador = L.marker([lat, lon], { icon: redPinIcon }).addTo(map);
-                marcador.bindPopup(`
-                    <b>${local.nome}</b><br>
-                    <p>${local.endereco}</p>
+                const marker = L.marker([lat, lon], { icon: redPinIcon }).addTo(map);
+                marker.bindPopup(`
+                    <b>${local.name}</b><br>
+                    <p>${local.address}</p>
                     <a href="https://www.google.com/maps/search/?api=1&query=${lat},${lon}" target="_blank">
-                        <button style="background-color:#FFD700;">Como Chegar</button>
+                        <button style="background-color:#FFD700;">Get Directions</button>
                     </a>
                     <br>
-                    <button onclick="toggleFavorito('${local.nome}', '${local.gps}', '${local.endereco}', '${local.tipo}')">
-                        ⭐ Favoritar
+                    <button onclick="toggleFavorite('${local.name}', '${local.gps}', '${local.address}', '${local.type}')">
+                        ⭐ Favorite
                     </button>
                 `);
                 bounds.push([lat, lon]);
             });
             map.fitBounds(bounds);
-            console.log(`${favoritos.length} favoritos exibidos`);
+            console.log(`${favorites.length} favorites displayed`);
         }
 
-        // Listeners
-        document.getElementById("btn-todos").addEventListener("click", () => carregarLocaisGlobais("TODOS"));
-        document.getElementById("btn-atms").addEventListener("click", () => carregarLocaisGlobais("ATM"));
-        document.getElementById("btn-comercios").addEventListener("click", () => carregarLocaisGlobais("Comércio"));
-        document.getElementById("btn-limpar").addEventListener("click", limparMapa);
-        document.getElementById("btn-favoritos").addEventListener("click", mostrarFavoritos);
-        document.getElementById("search-button").addEventListener("click", buscarPais);
+        // Event listeners
+        document.getElementById("btn-todos").addEventListener("click", () => loadLocations("ALL"));
+        document.getElementById("btn-atms").addEventListener("click", () => loadLocations("ATM"));
+        document.getElementById("btn-comercios").addEventListener("click", () => loadLocations("Store"));
+        document.getElementById("btn-limpar").addEventListener("click", clearMap);
+        document.getElementById("btn-favoritos").addEventListener("click", showFavorites);
+        document.getElementById("search-button").addEventListener("click", searchCountry);
 
-        // Carrega locais ao iniciar
-        console.log('Carregando locais iniciais...');
-        carregarLocaisGlobais("TODOS");
+        // Load locations on start
+        console.log('Loading initial locations...');
+        loadLocations("ALL");
     </script>
 
 </body>

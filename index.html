@@ -72,9 +72,9 @@
     <div id="map-container"></div>
 
     <script>
-        const map = L.map('map-container').setView([-14.235, -51.9253], 4); // Centro no Brasil
+        const map = L.map('map-container').setView([0, 0], 2); // Centro global
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
         // Ícone Personalizado 📍 (agulha vermelha)
@@ -89,13 +89,7 @@
             popupAnchor: [0, -30]
         });
 
-        const database = {
-            "Brasil": [
-                { "nome": "ATM Bitcoin São Paulo", "gps": "-23.561414,-46.655881", "endereco": "Av. Paulista, 1000, SP", "tipo": "ATM" },
-                { "nome": "Loja Bitcoin Campinas", "gps": "-22.909938,-47.062633", "endereco": "Av. Barão de Itapura, 1500, SP", "tipo": "Comércio" }
-            ]
-        };
-
+        // Função para limpar o mapa
         function limparMapa() {
             map.eachLayer(layer => {
                 if (layer instanceof L.Marker) {
@@ -104,45 +98,73 @@
             });
         }
 
+        // Função para adicionar marcador
         function adicionarMarcador(local) {
-            const [lat, lon] = local.gps.split(",");
+            const lat = local.latitude;
+            const lon = local.longitude;
+            const tipo = local.tags['payment:bitcoin'] === 'yes' ? 'Comércio' : 'ATM'; // Aproximação baseada em tags
+            const nome = local.tags.name || 'Local sem nome';
+            const endereco = local.tags.address || 'Endereço não disponível';
+
             const marcador = L.marker([lat, lon], { icon: redPinIcon }).addTo(map);
             marcador.bindPopup(`
-                <b>${local.nome}</b><br>
-                <p>${local.endereco}</p>
+                <b>${nome}</b><br>
+                <p>${endereco}</p>
                 <a href="https://www.google.com/maps/search/?api=1&query=${lat},${lon}" target="_blank">
                     <button style="background-color:#FFD700;">Como Chegar</button>
                 </a>
                 <br>
-                <button onclick="toggleFavorito('${local.nome}', '${local.gps}', '${local.endereco}', '${local.tipo}')">
+                <button onclick="toggleFavorito('${nome}', '${lat},${lon}', '${endereco}', '${tipo}')">
                     ⭐ Favoritar
                 </button>
             `);
         }
 
-        function exibirLocais(tipo) {
-            limparMapa();
-            for (const pais in database) {
-                database[pais].forEach(local => {
-                    if (tipo === "TODOS" || local.tipo === tipo) {
-                        adicionarMarcador(local);
-                    }
-                });
-            }
+        // Função para carregar todos os locais da API
+        function carregarLocaisGlobais(tipoFiltro = 'TODOS') {
+            fetch('https://api.btcmap.org/v2/places')
+                .then(response => response.json())
+                .then(data => {
+                    limparMapa();
+                    const bounds = [];
+                    data.forEach(local => {
+                        const tipo = local.tags['payment:bitcoin'] === 'yes' ? 'Comércio' : 'ATM';
+                        if (tipoFiltro === 'TODOS' || tipo === tipoFiltro) {
+                            adicionarMarcador(local);
+                            bounds.push([local.latitude, local.longitude]);
+                        }
+                    });
+                    if (bounds.length > 0) map.fitBounds(bounds);
+                })
+                .catch(error => console.error('Erro ao carregar locais:', error));
         }
 
+        // Função para buscar por país
         function buscarPais() {
-            const pais = document.getElementById("country-search").value.trim();
-            if (!database[pais]) {
-                alert("País não encontrado no banco de dados.");
-                return;
-            }
-            limparMapa();
-            database[pais].forEach(adicionarMarcador);
-            const bounds = database[pais].map(loc => loc.gps.split(",").map(Number));
-            map.fitBounds(bounds);
+            const pais = document.getElementById("country-search").value.trim().toLowerCase();
+            fetch('https://api.btcmap.org/v2/places')
+                .then(response => response.json())
+                .then(data => {
+                    limparMapa();
+                    const bounds = [];
+                    const locaisFiltrados = data.filter(local => 
+                        (local.tags.country || '').toLowerCase().includes(pais) ||
+                        (local.tags['addr:country'] || '').toLowerCase().includes(pais)
+                    );
+                    if (locaisFiltrados.length === 0) {
+                        alert("País não encontrado ou sem locais registrados.");
+                        return;
+                    }
+                    locaisFiltrados.forEach(local => {
+                        adicionarMarcador(local);
+                        bounds.push([local.latitude, local.longitude]);
+                    });
+                    map.fitBounds(bounds);
+                })
+                .catch(error => console.error('Erro ao buscar país:', error));
         }
 
+        // Função para favoritar/desfavoritar
         function toggleFavorito(nome, gps, endereco, tipo) {
             let favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
             const index = favoritos.findIndex(fav => fav.nome === nome);
@@ -157,6 +179,7 @@
             alert(index === -1 ? "Adicionado aos favoritos!" : "Removido dos favoritos!");
         }
 
+        // Função para mostrar favoritos
         function mostrarFavoritos() {
             limparMapa();
             let favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
@@ -164,18 +187,35 @@
                 alert("Nenhum favorito salvo.");
                 return;
             }
-            favoritos.forEach(adicionarMarcador);
-            const bounds = favoritos.map(loc => loc.gps.split(",").map(Number));
+            const bounds = [];
+            favoritos.forEach(local => {
+                const [lat, lon] = local.gps.split(",");
+                const marcador = L.marker([lat, lon], { icon: redPinIcon }).addTo(map);
+                marcador.bindPopup(`
+                    <b>${local.nome}</b><br>
+                    <p>${local.endereco}</p>
+                    <a href="https://www.google.com/maps/search/?api=1&query=${lat},${lon}" target="_blank">
+                        <button style="background-color:#FFD700;">Como Chegar</button>
+                    </a>
+                    <br>
+                    <button onclick="toggleFavorito('${local.nome}', '${local.gps}', '${local.endereco}', '${local.tipo}')">
+                        ⭐ Favoritar
+                    </button>
+                `);
+                bounds.push([lat, lon]);
+            });
             map.fitBounds(bounds);
         }
 
+        // Listeners dos botões
         document.getElementById("search-button").addEventListener("click", buscarPais);
-        document.getElementById("btn-todos").addEventListener("click", () => exibirLocais("TODOS"));
-        document.getElementById("btn-atms").addEventListener("click", () => exibirLocais("ATM"));
-        document.getElementById("btn-comercios").addEventListener("click", () => exibirLocais("Comércio"));
+        document.getElementById("btn-todos").addEventListener("click", () => carregarLocaisGlobais("TODOS"));
+        document.getElementById("btn-atms").addEventListener("click", () => carregarLocaisGlobais("ATM"));
+        document.getElementById("btn-comercios").addEventListener("click", () => carregarLocaisGlobais("Comércio"));
         document.getElementById("btn-limpar").addEventListener("click", limparMapa);
         document.getElementById("btn-favoritos").addEventListener("click", mostrarFavoritos);
 
+        // Geolocalização do usuário
         function getUserLocation() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(position => {
